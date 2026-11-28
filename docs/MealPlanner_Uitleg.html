@@ -1,0 +1,1178 @@
+<!DOCTYPE html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Meal Planner: volledige uitleg</title><style>
+:root{--ink:#1f2430;--soft:#5b6273;--bg:#f7f6f2;--card:#fff;--line:#e4e1d8;--acc:#d9480f;--acc2:#1c7ed6;--ok:#2b8a3e;--warn:#f08c00;--code:#272b35}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.65 "Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+nav{position:fixed;top:0;left:0;bottom:0;width:250px;overflow:auto;background:#1f2430;color:#cfd3dc;padding:22px 16px;font-size:14px}
+nav b{color:#fff;display:block;margin:0 0 12px;font-size:16px}nav a{display:block;color:#cfd3dc;text-decoration:none;padding:4px 8px;border-radius:6px}
+nav a:hover{background:#2d3343;color:#fff}nav .grp{margin:14px 0 4px;color:#8a91a3;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+main{margin-left:250px;padding:30px 48px 80px;max-width:1150px}
+h1{font-size:34px;line-height:1.2;margin:10px 0}h2{font-size:26px;margin:56px 0 12px;padding-top:10px;border-top:3px solid var(--ink)}
+h3{font-size:19px;margin:26px 0 8px}p{margin:8px 0}
+.lead{font-size:18px;color:var(--soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:14px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:20px;padding:2px 10px;margin-right:6px;background:#ffe8d9;color:var(--acc)}
+.pill.b{background:#e3f0ff;color:var(--acc2)}.pill.g{background:#e5f6e8;color:var(--ok)}
+.tip{border-left:4px solid var(--acc2);background:#eef5ff;padding:10px 16px;border-radius:0 10px 10px 0;margin:12px 0}
+.warn{border-left:4px solid var(--warn);background:#fff6e5;padding:10px 16px;border-radius:0 10px 10px 0;margin:12px 0}
+.analogy{border-left:4px solid var(--acc);background:#fff3ec;padding:10px 16px;border-radius:0 10px 10px 0;margin:12px 0}
+.block{position:relative;padding-left:66px}
+.block .num{position:absolute;left:18px;top:18px;width:36px;height:36px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.done{color:var(--ok);font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:10px 0}th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:#f0eee7}
+code{font-family:Consolas,"Cascadia Code",monospace;font-size:13.5px;background:#f0eee7;padding:1px 5px;border-radius:4px}
+pre.code{background:var(--code);color:#e8e6df;padding:14px 16px;border-radius:10px;overflow:auto;font-size:13px;line-height:1.5}
+pre.code code{background:none;padding:0;color:inherit}
+.diagram{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;overflow:auto;margin:10px 0}
+.diagram svg{max-width:100%;height:auto;display:block}
+.big svg{min-width:1100px}
+details.file{background:#fff;border:1px solid var(--line);border-radius:10px;margin:8px 0;position:relative}
+details.file summary{cursor:pointer;padding:10px 14px;display:flex;gap:14px;align-items:baseline}
+.fname{font-weight:700}.fpath{color:var(--soft);font-size:12.5px;font-family:Consolas,monospace;flex:1}.flines{font-size:12px;color:var(--soft)}
+details.file pre{margin:0 10px 10px}
+.copy{position:absolute;right:14px;top:48px;z-index:2;border:0;background:#4a5163;color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px}
+details.qa{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:8px 0}
+details.qa summary{cursor:pointer;font-weight:600}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.flow span{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:14px}.flow i{color:var(--soft);font-style:normal}
+.layers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.layer{border-radius:12px;padding:14px 16px;border:2px solid}
+.layer.v{border-color:#1c7ed6;background:#eef5ff}.layer.c{border-color:#7048e8;background:#f3f0ff}.layer.m{border-color:#2b8a3e;background:#ebfbee}
+.layer h4{margin:0 0 6px}
+@media(max-width:900px){nav{display:none}main{margin-left:0;padding:20px}.layers{grid-template-columns:1fr}}
+</style></head><body>
+<nav><b>🍝 Meal Planner</b>
+<div class="grp">Begin hier</div><a href="#start">Het project in 1 minuut</a><a href="#eisen">Wat moet er allemaal in?</a><a href="#lagen">Het grote plaatje</a>
+<div class="grp">Stappenplan</div><a href="#blok1">1. Project klaarzetten</a><a href="#blok2">2. Het hart: recepten (Builder)</a><a href="#blok3">3. Het weekplan en de automatische lijst (Observer)</a><a href="#blok4">4. Eén centrale database (Singleton + MVC-model)</a><a href="#blok5">5. Undo en redo (Command)</a><a href="#blok6">6. De Controller</a><a href="#blok7">7. De View en de start (JavaFX)</a><a href="#blok8">8. Tests</a><a href="#blok9">9. UML in Visual Paradigm</a><a href="#blok10">10. Inleveren en verdedigen</a>
+<div class="grp">Theorie</div><a href="#patronen">Patronen, eenvoudig</a><a href="#p-mvc">MVC</a><a href="#p-singleton">Singleton</a><a href="#p-observer">Observer</a><a href="#p-builder">Builder</a><a href="#p-command">Command</a>
+<div class="grp">Diagrammen</div><a href="#diagrammen">Klassen, use case, sequentie</a><a href="#uml">UML importeren in VP</a>
+<div class="grp">Afronden</div><a href="#verdediging">Verdedigingsvragen</a><a href="#codebank">Codebank (alle code)</a>
+</nav><main>
+<p class="pill">5-Software Design · Project optie 1</p>
+<h1 id="start">Smart Meal Planner, stap voor stap uitgelegd</h1>
+<p class="lead">De code, de app en de UML zijn in het <b>Engels</b> (voor de prof); deze uitleg is in het Nederlands. Een JavaFX-app met drie tabbladen: een receptenboek, een weekplan (7 dagen × 4 momenten) en een boodschappenlijst die zichzelf uitrekent. Deze pagina legt uit <b>wat</b> we bouwen, <b>in welke volgorde</b>, en <b>waarom</b> elk patroon op die plek staat. Onderaan vind je alle code en de UML-bestanden.</p>
+<div class="grid">
+<div class="card"><b>15 gewone klassen</b><br>± 700 regels, geen enums of records, met Nederlandse uitleg in de comments.</div>
+<div class="card"><b>5 patronen</b><br>MVC · Singleton · Observer · Builder · Command</div>
+<div class="card"><b>18 tests, allemaal groen</b><br>3 unit-testklassen + 1 integratietest</div>
+<div class="card"><b>8 UML-diagrammen</b><br>als Visual Paradigm XML, klaar om te importeren</div></div>
+
+<h2 id="eisen">Wat moet er allemaal in?</h2>
+<p>Alles uit de Lab 6-slides, met waar het in de code zit:</p>
+<table><tr><th>Eis</th><th>Waar</th><th></th></tr><tr><td>Recepten met titel, beschrijving, ingrediënten, tags</td><td>Recipe, Ingredient, RecipeBuilder</td><td class="done">✔</td></tr><tr><td>Recepten toevoegen / bekijken / bewerken / verwijderen</td><td>MainView tab &quot;Recipes&quot; → PlannerController → MealPlannerDB</td><td class="done">✔</td></tr><tr><td>Weekplan: 7 dagen × ontbijt, lunch, avondeten, snack</td><td>WeekPlan (DAYS en SLOTS)</td><td class="done">✔</td></tr><tr><td>Recept kiezen per dag, plan bekijken, wijzigen of verwijderen</td><td>tab &quot;Week plan&quot; → assignMeal / clearMeal (Command)</td><td class="done">✔</td></tr><tr><td>Boodschappenlijst uit het plan, hoeveelheden opgeteld</td><td>GroceryList.onPlanChanged (Observer) + omrekening kg→g in Ingredient</td><td class="done">✔</td></tr><tr><td>Automatisch bijgewerkt</td><td>WeekPlan verwittigt GroceryList bij elke wijziging</td><td class="done">✔</td></tr><tr><td>Afvinken als gekocht + extra items</td><td>GroceryItem.toggleBought, GroceryList.addExtra</td><td class="done">✔</td></tr><tr><td>MVC, Singleton (thread-safe), Observer, Builder + Command</td><td>zie hoofdstuk Patronen</td><td class="done">✔</td></tr><tr><td>Klassendiagram, mini per patroon, use case, sequentie</td><td>8 diagrammen in Visual Paradigm XML</td><td class="done">✔</td></tr><tr><td>Unit tests (1 klasse volledig) + integratietest</td><td>GroceryListUTest (volledig) + PlannerIT</td><td class="done">✔</td></tr></table>
+
+<h2 id="lagen">Het grote plaatje: drie lagen</h2>
+<div class="layers">
+<div class="layer v"><h4>View: wat je ziet</h4><code>MainView</code>, <code>ViewApp</code><br>Tekent, stuurt klikken door. Rekent zelf niets.</div>
+<div class="layer c"><h4>Controller: de ober</h4><code>PlannerController</code>, <code>CommandHistory</code>, <code>SetMealCommand</code><br>Controleert invoer, maakt commands.</div>
+<div class="layer m"><h4>Model: de keuken</h4><code>MealPlannerDB</code>, <code>WeekPlan</code>, <code>GroceryList</code>, <code>Recipe</code>, ...<br>Data en regels. Geen JavaFX.</div></div>
+<p><b>Wat gebeurt er als je "Pasta" kiest voor maandag-avond?</b></p>
+<div class="flow"><span>klik in MainView</span><i>→</i><span>controller.assignMeal()</span><i>→</i><span>new SetMealCommand</span><i>→</i><span>history.run(cmd)</span><i>→</i><span>db.setMeal()</span><i>→</i><span>plan.set()</span><i>→</i><span>GroceryList.onPlanChanged() telt op</span><i>→</i><span>firePropertyChange</span><i>→</i><span>MainView.refresh()</span></div>
+<div class="tip">Onthoud deze ene ketting. Ze bevat <b>alle vijf</b> de patronen en is precies het sequentiediagram. Kun je die uitleggen, dan kun je het hele project uitleggen.</div>
+
+<h2 id="stappen">Stappenplan, blok per blok</h2>
+<p>Werk van binnen (model) naar buiten (scherm). Zo kun je elk blok meteen testen zonder dat er al een scherm is.</p>
+<div class="card block" id="blok1"><div class="num">1</div><h3 style="margin-top:0">Project klaarzetten</h3><p class="lead" style="font-size:15px;margin-top:-4px">Zorg dat je projectmap compileert voordat je code schrijft.</p><ul><li>Open de <b>root <code>pom.xml</code></b> in IntelliJ (File → Open → <i>Open as Project</i>). Zet overal Java 21.</li><li>Kopieer de map <code>.mvn/wrapper</code> uit de starter-repo als die ontbreekt (nodig voor <code>mvnw</code>).</li><li>Voeg een <code>.gitignore</code> toe (<code>target/</code>, <code>.idea/</code>) zodat build-bestanden niet in Git belanden.</li><li>Maak de packages aan: <code>model</code>, <code>command</code>, <code>controller</code>, <code>view</code>.</li></ul><p><b>✔ Klaar als:</b> De app compileert: <code>mvnw.cmd -pl project test</code> loopt zonder fouten.</p></div><div class="card block" id="blok2"><div class="num">2</div><h3 style="margin-top:0">Het hart: recepten (Builder)</h3><p class="lead" style="font-size:15px;margin-top:-4px">Eerst de kleinste bouwstenen, zonder scherm.</p><p><code>Ingredient</code> (naam, hoeveelheid, eenheid; zet kg en l meteen om naar g en ml), <code>Recipe</code> (gewone klasse met alleen getters) en <code>RecipeBuilder</code>. Schrijf meteen <code>RecipeBuilderUTest</code>.</p><pre class="code"><code>Recipe r = new RecipeBuilder().title(&quot;Omelette&quot;).ingredient(&quot;egg&quot;, 3, &quot;piece&quot;).build();</code></pre><p><b>✔ Klaar als:</b> Een recept bouwen werkt en een leeg recept geeft een fout.</p></div><div class="card block" id="blok3"><div class="num">3</div><h3 style="margin-top:0">Het weekplan en de automatische lijst (Observer)</h3><p class="lead" style="font-size:15px;margin-top:-4px">Dit is het moeilijkste stuk van de opdracht, dus doe het vroeg.</p><p><code>WeekPlan</code> (7 dagen × 4 momenten als gewone tekst: <code>DAYS</code> en <code>SLOTS</code>; het subject), <code>PlanObserver</code>, <code>GroceryItem</code> en <code>GroceryList</code> (observer die alles optelt). Schrijf meteen <code>GroceryListUTest</code>: die test elke regel en elke if van GroceryList.</p><pre class="code"><code>plan.addObserver(list);
+plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+plan.set(&quot;Thursday&quot;, &quot;Dinner&quot;, pasta);
+list.amountOf(&quot;pasta&quot;, &quot;g&quot;);   // 200</code></pre><p><b>✔ Klaar als:</b> Twee keer pasta plannen geeft 200 g pasta op de lijst.</p></div><div class="card block" id="blok4"><div class="num">4</div><h3 style="margin-top:0">Eén centrale database (Singleton + MVC-model)</h3><p class="lead" style="font-size:15px;margin-top:-4px">Alles samenbrengen op één plek.</p><p><code>MealPlannerDB</code> bevat de recepten, het plan en de lijst, koppelt de observer (<code>plan.addObserver(groceries)</code>) en roept <code>firePropertyChange</code> na elke wijziging. Thread-safe singleton met <code>volatile</code> + double-checked locking. Geef hem een <code>reset()</code> voor tests.</p><pre class="code"><code>MealPlannerDB db = MealPlannerDB.getInstance();
+db.reset();</code></pre><p><b>✔ Klaar als:</b> Overal waar je <code>getInstance()</code> oproept, krijg je hetzelfde object.</p></div><div class="card block" id="blok5"><div class="num">5</div><h3 style="margin-top:0">Undo en redo (Command)</h3><p class="lead" style="font-size:15px;margin-top:-4px">Elke wijziging aan het plan wordt een object.</p><p><code>Command</code> (interface), <code>SetMealCommand</code> (zet of wist een maaltijd en onthoudt de vorige) en <code>CommandHistory</code> (twee stapels). Eén command volstaat: "verwijderen" is gewoon "zet op <code>null</code>". Test met <code>CommandHistoryUTest</code>.</p><pre class="code"><code>history.run(new SetMealCommand(db, &quot;Monday&quot;, &quot;Dinner&quot;, pasta));
+history.undo();   // Monday dinner is empty again</code></pre><p><b>✔ Klaar als:</b> Undo en redo zetten het plan én de boodschappenlijst terug.</p></div><div class="card block" id="blok6"><div class="num">6</div><h3 style="margin-top:0">De Controller</h3><p class="lead" style="font-size:15px;margin-top:-4px">De ober tussen scherm en model.</p><p><code>PlannerController</code> krijgt de DB en de CommandHistory via de constructor (net als in lab 5). Hij leest tekst uit het formulier ("200 g pasta"), bouwt het recept met de Builder en stuurt plan-wijzigingen via commands. Foute invoer geeft een <code>IllegalArgumentException</code>.</p><pre class="code"><code>controller.addRecipe(&quot;Pasta&quot;, &quot;&quot;, &quot;100 g pasta\n1 piece onion&quot;, &quot;quick&quot;);
+controller.assignMeal(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);</code></pre><p><b>✔ Klaar als:</b> De integratietest <code>PlannerIT</code> slaagt.</p></div><div class="card block" id="blok7"><div class="num">7</div><h3 style="margin-top:0">De View en de start (JavaFX)</h3><p class="lead" style="font-size:15px;margin-top:-4px">Als laatste het scherm: dat is het minst belangrijke voor de punten.</p><p><code>MainView</code> is een <code>TabPane</code> met drie tabs: <b>Recipes</b> (lijst + formulier), <b>Week plan</b> (7×4 keuzelijsten, ✕ om te wissen, undo/redo) en <b>Groceries</b> (vinkjes + extra item). Hij luistert naar het model en roept bij elke wijziging <code>refresh()</code>. <code>ViewApp</code> maakt M, V en C en koppelt ze. <b>Starten in IntelliJ:</b> run <code>Launcher</code> (niet ViewApp), anders krijg je "JavaFX runtime components are missing".</p><pre class="code"><code>// IntelliJ: open Launcher.java en klik op de groene pijl naast main
+// of in de terminal (in de map Project_SoftwareDesign):
+mvnw.cmd -pl project javafx:run</code></pre><p><b>✔ Klaar als:</b> De app opent met drie tabs en drie voorbeeldrecepten.</p></div><div class="card block" id="blok8"><div class="num">8</div><h3 style="margin-top:0">Tests</h3><p class="lead" style="font-size:15px;margin-top:-4px">Verplicht: één klasse volledig getest + één integratietest.</p><table><tr><th>Testklasse</th><th>Soort</th><th>Wat bewijst ze</th></tr><tr><td><code>GroceryListUTest</code></td><td>unit, <b>volledig</b></td><td>lege lijst, optellen, kg→g, aparte eenheden, krimpen bij verwijderen, vinkjes blijven, extra items, foute invoer</td></tr><tr><td><code>RecipeBuilderUTest</code></td><td>unit</td><td>volledig recept, fouten bij lege titel/geen ingrediënten, onveranderlijk</td></tr><tr><td><code>CommandHistoryUTest</code></td><td>unit</td><td>run/undo/redo, lege geschiedenis, redo gewist na nieuwe actie</td></tr><tr><td><code>PlannerIT</code></td><td><b>integratie</b></td><td>controller + singleton + commands + observer samen: plannen, optellen, undo/redo, recept bewerken/verwijderen, events naar de "View"</td></tr></table><p class="done">Resultaat bij mij: 18 van 18 tests groen.</p><p><b>✔ Klaar als:</b> In IntelliJ: rechtsklik op <code>GroceryListUTest</code> → <i>Run with Coverage</i> toont 100% voor GroceryList.</p></div><div class="card block" id="blok9"><div class="num">9</div><h3 style="margin-top:0">UML in Visual Paradigm</h3><p class="lead" style="font-size:15px;margin-top:-4px">Importeer de diagrammen en controleer ze.</p><p>Zie het hoofdstuk <a href="#uml">UML importeren</a>. Je krijgt 8 diagrammen: het volledige klassendiagram, 5 mini-diagrammen (één per patroon), het use-case-diagram en het sequentiediagram.</p><p><b>✔ Klaar als:</b> Alle 8 diagrammen staan in je VP-project en kloppen met de code.</p></div><div class="card block" id="blok10"><div class="num">10</div><h3 style="margin-top:0">Inleveren en verdedigen</h3><p class="lead" style="font-size:15px;margin-top:-4px">Bijna klaar.</p><ul><li>Zip met: code, UML (VP → <i>Export → XML</i>), AI-gebruik.</li><li>Vul <code>docs/AI_gebruik_project.md</code> aan met jullie eigen vragen.</li><li>Oefen de <a href="#verdediging">verdedigingsvragen</a>: allebei moeten jullie elk patroon kunnen uitleggen.</li></ul><p><b>✔ Klaar als:</b> Jullie kunnen het sequentiediagram stap voor stap volgen in de debugger.</p></div>
+
+<h2 id="patronen">De patronen, eenvoudig uitgelegd</h2>
+<p>Een design pattern is een <b>bekende, beproefde oplossing voor een probleem dat vaak terugkomt</b>. Zie het als een recept: je hoeft het wiel niet opnieuw uit te vinden. Per patroon: een vergelijking uit het dagelijks leven, het probleem, de oplossing, waar het zit, het mini-klassendiagram en een typische examenvraag.</p>
+
+<h3 id="p-mvc">MVC: Model, View, Controller <span class="pill b">verplicht</span></h3>
+<div class="card">
+<div class="analogy"><b>Zo moet je het zien:</b> Een restaurant. De <b>zaal</b> (View) is wat de klant ziet. De <b>ober</b> (Controller) neemt de bestelling op en controleert ze. De <b>keuken</b> (Model) heeft alle ingrediënten en maakt het eten. De klant loopt nooit zelf de keuken in.</div>
+<p><b>Welk probleem lost het op?</b> Als je schermcode, regels en data door elkaar schrijft, wordt alles één grote knoop. Eén knop aanpassen breekt dan je berekening.</p>
+<p><b>Hoe?</b> Splits de app in drie lagen die elk één taak hebben. De View tekent en stuurt klikken door. De Controller zet een klik om in een opdracht voor het model. Het Model bewaart de data en roept "er is iets veranderd!" (PropertyChange). De View hoort dat en tekent opnieuw.</p>
+<p><b>Waar in ons project?</b> <code>MainView</code> = View, <code>PlannerController</code> = Controller, <code>MealPlannerDB</code> (+ WeekPlan, GroceryList, ...) = Model. Exact dezelfde opbouw als in <b>lab 5</b> (View, Controller, Database met <code>PropertyChangeSupport</code>).</p>
+
+<div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1221 671" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="40" y="40" width="342" height="110" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="211.0" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«GUI»</text><text x="211.0" y="70" text-anchor="middle" font-weight="700" font-size="12">MainView</text><line x1="40" y1="78" x2="382" y2="78" stroke="#3d4556"/><text x="46" y="90" font-size="11" font-family="monospace">-model: MealPlannerDB</text><text x="46" y="105" font-size="11" font-family="monospace">-controller: PlannerController</text><line x1="40" y1="112" x2="382" y2="112" stroke="#3d4556"/><text x="46" y="124" font-size="11" font-family="monospace">+propertyChange(evt: PropertyChangeEvent): void</text><text x="46" y="139" font-size="11" font-family="monospace">-refresh(): void</text><rect x="40" y="220" width="342" height="65" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="211.0" y="236" text-anchor="middle" font-size="11" fill="#d9480f">«interface»</text><text x="211.0" y="250" text-anchor="middle" font-weight="700" font-size="12" font-style="italic">PropertyChangeListener</text><line x1="40" y1="258" x2="382" y2="258" stroke="#3d4556"/><text x="46" y="270" font-size="11" font-family="monospace">+propertyChange(evt: PropertyChangeEvent): void</text><rect x="472" y="40" width="709" height="201" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="826.5" y="56" text-anchor="middle" font-weight="700" font-size="12">PlannerController</text><line x1="472" y1="64" x2="1181" y2="64" stroke="#3d4556"/><text x="478" y="76" font-size="11" font-family="monospace">-db: MealPlannerDB</text><text x="478" y="91" font-size="11" font-family="monospace">-history: CommandHistory</text><line x1="472" y1="98" x2="1181" y2="98" stroke="#3d4556"/><text x="478" y="110" font-size="11" font-family="monospace">+addRecipe(title: String, description: String, ingredients: String, tags: String): void</text><text x="478" y="125" font-size="11" font-family="monospace">+editRecipe(old: Recipe, title: String, description: String, ingredients: String, tags: String): void</text><text x="478" y="140" font-size="11" font-family="monospace">+removeRecipe(recipe: Recipe): void</text><text x="478" y="155" font-size="11" font-family="monospace">+assignMeal(day: String, slot: String, recipe: Recipe): void</text><text x="478" y="170" font-size="11" font-family="monospace">+clearMeal(day: String, slot: String): void</text><text x="478" y="185" font-size="11" font-family="monospace">+undo(): void</text><text x="478" y="200" font-size="11" font-family="monospace">+redo(): void</text><text x="478" y="215" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="478" y="230" font-size="11" font-family="monospace">+addExtra(name: String, amount: String, unit: String): void</text><rect x="472" y="311" width="424" height="320" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="684.0" y="327" text-anchor="middle" font-size="11" fill="#d9480f">«Singleton»</text><text x="684.0" y="341" text-anchor="middle" font-weight="700" font-size="12">MealPlannerDB</text><line x1="472" y1="349" x2="896" y2="349" stroke="#3d4556"/><text x="478" y="361" font-size="11" font-family="monospace" text-decoration="underline">-instance: MealPlannerDB</text><text x="478" y="376" font-size="11" font-family="monospace">-pcs: PropertyChangeSupport</text><text x="478" y="391" font-size="11" font-family="monospace">-recipes: List&lt;Recipe&gt;</text><text x="478" y="406" font-size="11" font-family="monospace">-plan: WeekPlan</text><text x="478" y="421" font-size="11" font-family="monospace">-groceries: GroceryList</text><line x1="472" y1="428" x2="896" y2="428" stroke="#3d4556"/><text x="478" y="440" font-size="11" font-family="monospace">-MealPlannerDB()</text><text x="478" y="455" font-size="11" font-family="monospace" text-decoration="underline">+getInstance(): MealPlannerDB</text><text x="478" y="470" font-size="11" font-family="monospace">+reset(): void</text><text x="478" y="485" font-size="11" font-family="monospace">+getRecipes(): List&lt;Recipe&gt;</text><text x="478" y="500" font-size="11" font-family="monospace">+addRecipe(r: Recipe): void</text><text x="478" y="515" font-size="11" font-family="monospace">+updateRecipe(r: Recipe): void</text><text x="478" y="530" font-size="11" font-family="monospace">+removeRecipe(r: Recipe): void</text><text x="478" y="545" font-size="11" font-family="monospace">+getMeal(day: String, slot: String): Recipe</text><text x="478" y="560" font-size="11" font-family="monospace">+setMeal(day: String, slot: String, recipe: Recipe): void</text><text x="478" y="575" font-size="11" font-family="monospace">+getGroceries(): List&lt;GroceryItem&gt;</text><text x="478" y="590" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="478" y="605" font-size="11" font-family="monospace">+addExtra(name: String, amount: double, unit: String): void</text><text x="478" y="620" font-size="11" font-family="monospace">+addPropertyChangeListener(l: PropertyChangeListener): void</text><line x1="382" y1="107" x2="471" y2="114" stroke="#3d4556"/><polyline points="461.2,108.9 471,114 460.6,117.5" fill="none" stroke="#3d4556"/><text x="459" y="108" font-size="11" fill="#d9480f">1</text><text x="426.5" y="106.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">calls</text><line x1="280" y1="150" x2="482" y2="311" stroke="#3d4556"/><polyline points="476.7,301.3 482,311 471.4,308.0" fill="none" stroke="#3d4556"/><text x="470" y="305" font-size="11" fill="#d9480f">1</text><text x="381.0" y="226.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">reads</text><line x1="211" y1="150" x2="211" y2="219" stroke="#3d4556" stroke-dasharray="6 4"/><polygon points="211,219 217.1,206.4 204.9,206.4" fill="white" stroke="#3d4556"/><line x1="472" y1="372" x2="281" y2="284" stroke="#3d4556"/><polyline points="288.4,292.1 281,284 292.0,284.3" fill="none" stroke="#3d4556"/><text x="287" y="278" font-size="11" fill="#d9480f">0..*</text><text x="376.5" y="324.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">notifies</text><line x1="782" y1="240" x2="752" y2="311" stroke="#3d4556"/><polyline points="759.9,303.3 752,311 752.0,300.0" fill="none" stroke="#3d4556"/><text x="758" y="305" font-size="11" fill="#d9480f">1</text></svg></div>
+<pre class="code"><code>// Model: roept naar iedereen die luistert
+pcs.firePropertyChange(&quot;plan&quot;, null, recipe);
+
+// View: luistert en tekent opnieuw
+model.addPropertyChangeListener(this);
+public void propertyChange(PropertyChangeEvent evt) { refresh(); }
+
+// View -&gt; Controller bij een klik
+combo.setOnAction(e -&gt; controller.assignMeal(day, slot, combo.getValue()));</code></pre>
+<details class="qa"><summary>Examenvraag: Hoe weet de View dat er iets veranderd is, ook als hij het zelf niet veroorzaakte (bv. bij undo)?</summary><p>De View is ingeschreven als <code>PropertyChangeListener</code> bij het model. Elke wijziging in het model (ook een undo via de CommandHistory) roept <code>firePropertyChange</code>, dus de View krijgt altijd een seintje en roept <code>refresh()</code>.</p></details>
+</div>
+<h3 id="p-singleton">Singleton (thread-safe) <span class="pill b">verplicht</span></h3>
+<div class="card">
+<div class="analogy"><b>Zo moet je het zien:</b> Er is maar <b>één koelkast</b> in huis. Iedereen die iets nodig heeft, gaat naar dezelfde koelkast. Had iedereen zijn eigen koelkast, dan zou de ene niet weten wat de andere opgegeten heeft.</div>
+<p><b>Welk probleem lost het op?</b> Het weekplan, de recepten en de boodschappenlijst moeten overal <b>dezelfde</b> zijn. Twee kopieën zouden uit elkaar lopen.</p>
+<p><b>Hoe?</b> Maak de constructor <code>private</code> (niemand kan <code>new</code> doen) en geef één statische methode <code>getInstance()</code> die altijd hetzelfde object teruggeeft. <b>Thread-safe</b> met "double-checked locking": eerst snel kijken zonder slot, dan met slot (<code>synchronized</code>) nog eens kijken. <code>volatile</code> zorgt dat elke thread meteen het volledig gebouwde object ziet.</p>
+<p><b>Waar in ons project?</b> <code>MealPlannerDB.getInstance()</code>. In lab 3 deed je dit al met <code>IdGenerator</code> (daar met een "eager" instantie). Hier tonen we de luie (lazy), thread-safe versie.</p>
+
+<div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 863 400" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="40" y="40" width="199" height="51" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="139.5" y="56" text-anchor="middle" font-weight="700" font-size="12">ViewApp</text><line x1="40" y1="64" x2="239" y2="64" stroke="#3d4556"/><text x="46" y="76" font-size="11" font-family="monospace">+start(stage: Stage): void</text><rect x="399" y="40" width="424" height="320" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="611.0" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«Singleton»</text><text x="611.0" y="70" text-anchor="middle" font-weight="700" font-size="12">MealPlannerDB</text><line x1="399" y1="78" x2="823" y2="78" stroke="#3d4556"/><text x="405" y="90" font-size="11" font-family="monospace" text-decoration="underline">-instance: MealPlannerDB</text><text x="405" y="105" font-size="11" font-family="monospace">-pcs: PropertyChangeSupport</text><text x="405" y="120" font-size="11" font-family="monospace">-recipes: List&lt;Recipe&gt;</text><text x="405" y="135" font-size="11" font-family="monospace">-plan: WeekPlan</text><text x="405" y="150" font-size="11" font-family="monospace">-groceries: GroceryList</text><line x1="399" y1="157" x2="823" y2="157" stroke="#3d4556"/><text x="405" y="169" font-size="11" font-family="monospace">-MealPlannerDB()</text><text x="405" y="184" font-size="11" font-family="monospace" text-decoration="underline">+getInstance(): MealPlannerDB</text><text x="405" y="199" font-size="11" font-family="monospace">+reset(): void</text><text x="405" y="214" font-size="11" font-family="monospace">+getRecipes(): List&lt;Recipe&gt;</text><text x="405" y="229" font-size="11" font-family="monospace">+addRecipe(r: Recipe): void</text><text x="405" y="244" font-size="11" font-family="monospace">+updateRecipe(r: Recipe): void</text><text x="405" y="259" font-size="11" font-family="monospace">+removeRecipe(r: Recipe): void</text><text x="405" y="274" font-size="11" font-family="monospace">+getMeal(day: String, slot: String): Recipe</text><text x="405" y="289" font-size="11" font-family="monospace">+setMeal(day: String, slot: String, recipe: Recipe): void</text><text x="405" y="304" font-size="11" font-family="monospace">+getGroceries(): List&lt;GroceryItem&gt;</text><text x="405" y="319" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="405" y="334" font-size="11" font-family="monospace">+addExtra(name: String, amount: double, unit: String): void</text><text x="405" y="349" font-size="11" font-family="monospace">+addPropertyChangeListener(l: PropertyChangeListener): void</text><line x1="228" y1="90" x2="399" y2="139" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="390.4,132.1 399,139 388.1,140.3" fill="none" stroke="#3d4556"/><text x="313.5" y="110.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«use» getInstance()</text></svg></div>
+<pre class="code"><code>private static volatile MealPlannerDB instance;
+private MealPlannerDB() { reset(); }
+
+public static MealPlannerDB getInstance() {
+    if (instance == null) {                   // 1e check: snel
+        synchronized (MealPlannerDB.class) {  // slot: één thread tegelijk
+            if (instance == null) {           // 2e check: was iemand sneller?
+                instance = new MealPlannerDB();
+            }
+        }
+    }
+    return instance;
+}</code></pre>
+<details class="qa"><summary>Examenvraag: Waarom twee keer <code>if (instance == null)</code> en waarom <code>volatile</code>?</summary><p>Twee threads kunnen tegelijk de eerste check passeren. De eerste neemt het slot en maakt het object. Zonder de tweede check zou de tweede thread, zodra hij het slot krijgt, nóg een object maken. <code>volatile</code> voorkomt dat een thread een half-gebouwd object ziet (de JVM mag anders instructies herschikken). De eerste check zorgt dat we niet elke keer moeten wachten op het slot (sneller).</p></details>
+</div>
+<h3 id="p-observer">Observer (in het model, los van MVC) <span class="pill b">verplicht</span></h3>
+<div class="card">
+<div class="analogy"><b>Zo moet je het zien:</b> Een <b>YouTube-abonnement</b>. Het kanaal (Subject) houdt een lijst van abonnees bij. Komt er een nieuwe video, dan krijgt elke abonnee een melding. Het kanaal hoeft niet te weten wat de abonnee daarmee doet.</div>
+<p><b>Welk probleem lost het op?</b> De opdracht zegt: de boodschappenlijst wordt <b>automatisch</b> bijgewerkt als het plan verandert. Het weekplan mag daarvoor niet zelf de boodschappenlijst moeten kennen en besturen.</p>
+<p><b>Hoe?</b> Het <b>subject</b> (<code>WeekPlan</code>) heeft een lijst <code>observers</code> en methodes <code>addObserver</code>, <code>removeObserver</code>, <code>notifyObservers</code>. Elke <b>observer</b> implementeert de interface <code>PlanObserver</code> met één methode: <code>onPlanChanged(plan)</code>.</p>
+<p><b>Waar in ons project?</b> <code>WeekPlan</code> (subject) → <code>PlanObserver</code> (interface) ← <code>GroceryList</code> (observer). Bij elke <code>set(...)</code> rekent de lijst zichzelf opnieuw uit. Dezelfde structuur als lab 3 (<code>Subject</code>/<code>Observer</code>, de veiling).</p>
+<div class="tip"><b>Het optellen zelf:</b> elk ingrediënt krijgt een sleutel <code>naam|eenheid</code> (bv. <code>pasta|g</code>). Met <code>map.merge(sleutel, item, GroceryItem::plus)</code> worden gelijke sleutels opgeteld. KG en L worden eerst omgezet naar G en ML, dus 100 g + 0,1 kg = 200 g. Vinkjes "gekocht" blijven bewaard, en extra items zitten in een aparte lijst.</div>
+<div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1027 581" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="40" y="40" width="383" height="215" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="231.5" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«Subject»</text><text x="231.5" y="70" text-anchor="middle" font-weight="700" font-size="12">WeekPlan</text><line x1="40" y1="78" x2="423" y2="78" stroke="#3d4556"/><text x="46" y="90" font-size="11" font-family="monospace" text-decoration="underline">+DAYS: String[]</text><text x="46" y="105" font-size="11" font-family="monospace" text-decoration="underline">+SLOTS: String[]</text><text x="46" y="120" font-size="11" font-family="monospace">-meals: Map&lt;String, Recipe&gt;</text><text x="46" y="135" font-size="11" font-family="monospace">-observers: List&lt;PlanObserver&gt;</text><line x1="40" y1="142" x2="423" y2="142" stroke="#3d4556"/><text x="46" y="154" font-size="11" font-family="monospace">+get(day: String, slot: String): Recipe</text><text x="46" y="169" font-size="11" font-family="monospace">+set(day: String, slot: String, recipe: Recipe): void</text><text x="46" y="184" font-size="11" font-family="monospace">+plannedRecipes(): List&lt;Recipe&gt;</text><text x="46" y="199" font-size="11" font-family="monospace">+replaceEverywhere(id: String, r: Recipe): void</text><text x="46" y="214" font-size="11" font-family="monospace">+addObserver(o: PlanObserver): void</text><text x="46" y="229" font-size="11" font-family="monospace">+removeObserver(o: PlanObserver): void</text><text x="46" y="244" font-size="11" font-family="monospace">-notifyObservers(): void</text><rect x="563" y="40" width="267" height="65" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="696.5" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«interface»</text><text x="696.5" y="70" text-anchor="middle" font-weight="700" font-size="12" font-style="italic">PlanObserver</text><line x1="563" y1="78" x2="830" y2="78" stroke="#3d4556"/><text x="569" y="90" font-size="11" font-family="monospace">+onPlanChanged(plan: WeekPlan): void</text><rect x="563" y="175" width="424" height="140" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="775.0" y="191" text-anchor="middle" font-size="11" fill="#d9480f">«Observer»</text><text x="775.0" y="205" text-anchor="middle" font-weight="700" font-size="12">GroceryList</text><line x1="563" y1="213" x2="987" y2="213" stroke="#3d4556"/><text x="569" y="225" font-size="11" font-family="monospace">-generated: Map&lt;String, GroceryItem&gt;</text><text x="569" y="240" font-size="11" font-family="monospace">-extras: List&lt;GroceryItem&gt;</text><line x1="563" y1="247" x2="987" y2="247" stroke="#3d4556"/><text x="569" y="259" font-size="11" font-family="monospace">+onPlanChanged(plan: WeekPlan): void</text><text x="569" y="274" font-size="11" font-family="monospace">+addExtra(name: String, amount: double, unit: String): void</text><text x="569" y="289" font-size="11" font-family="monospace">+items(): List&lt;GroceryItem&gt;</text><text x="569" y="304" font-size="11" font-family="monospace">+amountOf(name: String, unit: String): double</text><rect x="563" y="385" width="281" height="156" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="703.5" y="401" text-anchor="middle" font-weight="700" font-size="12">GroceryItem</text><line x1="563" y1="409" x2="844" y2="409" stroke="#3d4556"/><text x="569" y="421" font-size="11" font-family="monospace">-name: String</text><text x="569" y="436" font-size="11" font-family="monospace">-amount: double</text><text x="569" y="451" font-size="11" font-family="monospace">-unit: String</text><text x="569" y="466" font-size="11" font-family="monospace">-manual: boolean</text><text x="569" y="481" font-size="11" font-family="monospace">-bought: boolean</text><line x1="563" y1="488" x2="844" y2="488" stroke="#3d4556"/><text x="569" y="500" font-size="11" font-family="monospace">+key(): String</text><text x="569" y="515" font-size="11" font-family="monospace">+plus(other: GroceryItem): GroceryItem</text><text x="569" y="530" font-size="11" font-family="monospace">+toggleBought(): void</text><line x1="422" y1="116" x2="562" y2="93" stroke="#3d4556"/><polyline points="551.3,90.4 562,93 552.7,98.9" fill="none" stroke="#3d4556"/><text x="550" y="87" font-size="11" fill="#d9480f">0..*</text><text x="492.0" y="100.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">notifies</text><line x1="743" y1="175" x2="710" y2="104" stroke="#3d4556" stroke-dasharray="6 4"/><polygon points="710,104 709.8,118.0 720.8,112.9" fill="white" stroke="#3d4556"/><line x1="751" y1="315" x2="728" y2="385" stroke="#3d4556"/><polyline points="735.2,376.7 728,385 727.1,374.0" fill="none" stroke="#3d4556"/><text x="734" y="379" font-size="11" fill="#d9480f">0..*</text></svg></div>
+<pre class="code"><code>// Subject
+public void set(String day, String slot, Recipe recipe) {
+    meals.put(day + &quot; &quot; + slot, recipe);
+    notifyObservers();                        // &quot;er is iets veranderd!&quot;
+}
+private void notifyObservers() {
+    for (PlanObserver o : observers) o.onPlanChanged(this);
+}
+
+// Observer
+public class GroceryList implements PlanObserver {
+    public void onPlanChanged(WeekPlan plan) { /* alles opnieuw optellen */ }
+}</code></pre>
+<details class="qa"><summary>Examenvraag: Waarom telt dit niet als de "MVC-observer"?</summary><p>De MVC-observer gaat van <b>model naar scherm</b> (PropertyChange naar de View). Deze Observer zit volledig <b>binnen het model</b>: model-object naar model-object (WeekPlan → GroceryList). Hij zou ook werken zonder scherm, bv. in de unit tests. Een tweede observer (bv. calorieteller) toevoegen kan zonder WeekPlan aan te passen.</p></details>
+</div>
+<h3 id="p-builder">Builder (onze creational keuze) <span class="pill g">verplicht: 1 van 3</span></h3>
+<div class="card">
+<div class="analogy"><b>Zo moet je het zien:</b> Een <b>broodje bestellen bij de Subway</b>. Je kiest stap voor stap: brood, beleg, saus, extra kaas. Pas op het einde zegt de verkoper "klaar" en krijg je het broodje. Hij controleert eerst of je wel brood gekozen hebt.</div>
+<p><b>Welk probleem lost het op?</b> Een recept heeft veel velden, waarvan sommige optioneel (beschrijving, tags) en een lijst ingrediënten. Een constructor met 5+ parameters is onleesbaar en foutgevoelig.</p>
+<p><b>Hoe?</b> Een aparte <code>RecipeBuilder</code> verzamelt de stukjes met methodes die <code>this</code> teruggeven (zodat je kunt "ketenen"). <code>build()</code> controleert alles (titel? minstens één ingrediënt?) en maakt dan pas het <code>Recipe</code>. Daarna verandert het recept niet meer (alleen getters, geen setters).</p>
+<p><b>Waar in ons project?</b> <code>RecipeBuilder</code> → <code>Recipe</code>. De controller gebruikt hem bij toevoegen en bewerken. In lab 4b deed je hetzelfde met <code>PaletteBuilder</code>.</p>
+
+<div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1923 521" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="40" y="40" width="709" height="201" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="394.5" y="56" text-anchor="middle" font-weight="700" font-size="12">PlannerController</text><line x1="40" y1="64" x2="749" y2="64" stroke="#3d4556"/><text x="46" y="76" font-size="11" font-family="monospace">-db: MealPlannerDB</text><text x="46" y="91" font-size="11" font-family="monospace">-history: CommandHistory</text><line x1="40" y1="98" x2="749" y2="98" stroke="#3d4556"/><text x="46" y="110" font-size="11" font-family="monospace">+addRecipe(title: String, description: String, ingredients: String, tags: String): void</text><text x="46" y="125" font-size="11" font-family="monospace">+editRecipe(old: Recipe, title: String, description: String, ingredients: String, tags: String): void</text><text x="46" y="140" font-size="11" font-family="monospace">+removeRecipe(recipe: Recipe): void</text><text x="46" y="155" font-size="11" font-family="monospace">+assignMeal(day: String, slot: String, recipe: Recipe): void</text><text x="46" y="170" font-size="11" font-family="monospace">+clearMeal(day: String, slot: String): void</text><text x="46" y="185" font-size="11" font-family="monospace">+undo(): void</text><text x="46" y="200" font-size="11" font-family="monospace">+redo(): void</text><text x="46" y="215" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="46" y="230" font-size="11" font-family="monospace">+addExtra(name: String, amount: String, unit: String): void</text><rect x="869" y="40" width="498" height="215" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1118.0" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«Builder»</text><text x="1118.0" y="70" text-anchor="middle" font-weight="700" font-size="12">RecipeBuilder</text><line x1="869" y1="78" x2="1367" y2="78" stroke="#3d4556"/><text x="875" y="90" font-size="11" font-family="monospace">-id: String</text><text x="875" y="105" font-size="11" font-family="monospace">-title: String</text><text x="875" y="120" font-size="11" font-family="monospace">-description: String</text><text x="875" y="135" font-size="11" font-family="monospace">-ingredients: List&lt;Ingredient&gt;</text><text x="875" y="150" font-size="11" font-family="monospace">-tags: List&lt;String&gt;</text><line x1="869" y1="157" x2="1367" y2="157" stroke="#3d4556"/><text x="875" y="169" font-size="11" font-family="monospace">+id(id: String): RecipeBuilder</text><text x="875" y="184" font-size="11" font-family="monospace">+title(t: String): RecipeBuilder</text><text x="875" y="199" font-size="11" font-family="monospace">+description(d: String): RecipeBuilder</text><text x="875" y="214" font-size="11" font-family="monospace">+ingredient(name: String, amount: double, unit: String): RecipeBuilder</text><text x="875" y="229" font-size="11" font-family="monospace">+tag(t: String): RecipeBuilder</text><text x="875" y="244" font-size="11" font-family="monospace">+build(): Recipe</text><rect x="869" y="325" width="260" height="156" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="999.0" y="341" text-anchor="middle" font-weight="700" font-size="12">Recipe</text><line x1="869" y1="349" x2="1129" y2="349" stroke="#3d4556"/><text x="875" y="361" font-size="11" font-family="monospace">-id: String</text><text x="875" y="376" font-size="11" font-family="monospace">-title: String</text><text x="875" y="391" font-size="11" font-family="monospace">-description: String</text><text x="875" y="406" font-size="11" font-family="monospace">-ingredients: List&lt;Ingredient&gt;</text><text x="875" y="421" font-size="11" font-family="monospace">-tags: List&lt;String&gt;</text><line x1="869" y1="428" x2="1129" y2="428" stroke="#3d4556"/><text x="875" y="440" font-size="11" font-family="monospace">+getTitle(): String</text><text x="875" y="455" font-size="11" font-family="monospace">+getIngredients(): List&lt;Ingredient&gt;</text><text x="875" y="470" font-size="11" font-family="monospace">+hasTag(tag: String): boolean</text><rect x="1487" y="40" width="396" height="111" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1685.0" y="56" text-anchor="middle" font-weight="700" font-size="12">Ingredient</text><line x1="1487" y1="64" x2="1883" y2="64" stroke="#3d4556"/><text x="1493" y="76" font-size="11" font-family="monospace">-name: String</text><text x="1493" y="91" font-size="11" font-family="monospace">-amount: double</text><text x="1493" y="106" font-size="11" font-family="monospace">-unit: String</text><line x1="1487" y1="113" x2="1883" y2="113" stroke="#3d4556"/><text x="1493" y="125" font-size="11" font-family="monospace">+Ingredient(name: String, amount: double, unit: String)</text><text x="1493" y="140" font-size="11" font-family="monospace">+getAmount(): double</text><line x1="748" y1="143" x2="869" y2="144" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="858.9,139.6 869,144 858.8,148.2" fill="none" stroke="#3d4556"/><text x="808.5" y="139.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«use» </text><line x1="1068" y1="254" x2="1035" y2="325" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="1043.2,317.6 1035,325 1035.4,314.0" fill="none" stroke="#3d4556"/><text x="1051.5" y="285.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«create» </text><line x1="1129" y1="344" x2="1561" y2="150" stroke="#3d4556"/><polyline points="1550.0,150.2 1561,150 1553.5,158.1" fill="none" stroke="#3d4556"/><text x="1549" y="144" font-size="11" fill="#d9480f">1..*</text></svg></div>
+<pre class="code"><code>Recipe pasta = new RecipeBuilder()
+        .title(&quot;Pasta pomodoro&quot;)
+        .ingredient(&quot;pasta&quot;, 100, &quot;g&quot;)
+        .ingredient(&quot;passata&quot;, 200, &quot;ml&quot;)
+        .tag(&quot;vegetarian&quot;)
+        .build();      // gooit een fout als de titel leeg is of er geen ingrediënten zijn</code></pre>
+<details class="qa"><summary>Examenvraag: Waarom Builder en niet Factory Method?</summary><p>Factory Method is handig als je moet kiezen <b>welk soort</b> object je maakt (bv. lab 4a: welk boomtype). Wij maken altijd hetzelfde soort object (een Recipe), maar met <b>veel onderdelen</b> die je stap voor stap invult. Daar is Builder voor. Bonus: tests worden heel kort, want je bouwt een recept in één regel.</p></details>
+</div>
+<h3 id="p-command">Command (ons extra patroon, met undo/redo) <span class="pill g">extra (≥1 uit de lijst)</span></h3>
+<div class="card">
+<div class="analogy"><b>Zo moet je het zien:</b> Een <b>bestelbonnetje</b> in de keuken. De ober schrijft de opdracht op een briefje (object) in plaats van zelf te koken. De briefjes worden op een stapel bewaard, dus je weet wat er gebeurd is en kunt het terugdraaien.</div>
+<p><b>Welk probleem lost het op?</b> Plannen is uitproberen: de gebruiker wil een wijziging kunnen <b>ongedaan maken</b> en <b>opnieuw doen</b>.</p>
+<p><b>Hoe?</b> Elke actie wordt een object met <code>execute()</code> en <code>undo()</code>. De <b>invoker</b> (<code>CommandHistory</code>) voert het uit en legt het op een undo-stapel. Undo haalt het eraf, roept <code>undo()</code> en legt het op de redo-stapel. Het command onthoudt zelf wat er vroeger stond (<code>previous</code>).</p>
+<p><b>Waar in ons project?</b> <b>Client</b> = <code>PlannerController</code> (maakt het command), <b>Invoker</b> = <code>CommandHistory</code>, <b>Command</b> = interface <code>Command</code>, <b>ConcreteCommand</b> = <code>SetMealCommand</code>, <b>Receiver</b> = <code>MealPlannerDB</code> (doet het echte werk).</p>
+
+<div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1605 521" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="40" y="40" width="709" height="201" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="394.5" y="56" text-anchor="middle" font-weight="700" font-size="12">PlannerController</text><line x1="40" y1="64" x2="749" y2="64" stroke="#3d4556"/><text x="46" y="76" font-size="11" font-family="monospace">-db: MealPlannerDB</text><text x="46" y="91" font-size="11" font-family="monospace">-history: CommandHistory</text><line x1="40" y1="98" x2="749" y2="98" stroke="#3d4556"/><text x="46" y="110" font-size="11" font-family="monospace">+addRecipe(title: String, description: String, ingredients: String, tags: String): void</text><text x="46" y="125" font-size="11" font-family="monospace">+editRecipe(old: Recipe, title: String, description: String, ingredients: String, tags: String): void</text><text x="46" y="140" font-size="11" font-family="monospace">+removeRecipe(recipe: Recipe): void</text><text x="46" y="155" font-size="11" font-family="monospace">+assignMeal(day: String, slot: String, recipe: Recipe): void</text><text x="46" y="170" font-size="11" font-family="monospace">+clearMeal(day: String, slot: String): void</text><text x="46" y="185" font-size="11" font-family="monospace">+undo(): void</text><text x="46" y="200" font-size="11" font-family="monospace">+redo(): void</text><text x="46" y="215" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="46" y="230" font-size="11" font-family="monospace">+addExtra(name: String, amount: String, unit: String): void</text><rect x="40" y="311" width="199" height="170" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="139.5" y="327" text-anchor="middle" font-size="11" fill="#d9480f">«Invoker»</text><text x="139.5" y="341" text-anchor="middle" font-weight="700" font-size="12">CommandHistory</text><line x1="40" y1="349" x2="239" y2="349" stroke="#3d4556"/><text x="46" y="361" font-size="11" font-family="monospace">-undoStack: Deque&lt;Command&gt;</text><text x="46" y="376" font-size="11" font-family="monospace">-redoStack: Deque&lt;Command&gt;</text><line x1="40" y1="383" x2="239" y2="383" stroke="#3d4556"/><text x="46" y="395" font-size="11" font-family="monospace">+run(c: Command): void</text><text x="46" y="410" font-size="11" font-family="monospace">+undo(): void</text><text x="46" y="425" font-size="11" font-family="monospace">+redo(): void</text><text x="46" y="440" font-size="11" font-family="monospace">+canUndo(): boolean</text><text x="46" y="455" font-size="11" font-family="monospace">+canRedo(): boolean</text><text x="46" y="470" font-size="11" font-family="monospace">+clear(): void</text><rect x="869" y="40" width="131" height="80" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="934.5" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«interface»</text><text x="934.5" y="70" text-anchor="middle" font-weight="700" font-size="12" font-style="italic">Command</text><line x1="869" y1="78" x2="1000" y2="78" stroke="#3d4556"/><text x="875" y="90" font-size="11" font-family="monospace">+execute(): void</text><text x="875" y="105" font-size="11" font-family="monospace">+undo(): void</text><rect x="869" y="190" width="152" height="141" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="945.0" y="206" text-anchor="middle" font-weight="700" font-size="12">SetMealCommand</text><line x1="869" y1="214" x2="1021" y2="214" stroke="#3d4556"/><text x="875" y="226" font-size="11" font-family="monospace">-db: MealPlannerDB</text><text x="875" y="241" font-size="11" font-family="monospace">-day: String</text><text x="875" y="256" font-size="11" font-family="monospace">-slot: String</text><text x="875" y="271" font-size="11" font-family="monospace">-recipe: Recipe</text><text x="875" y="286" font-size="11" font-family="monospace">-previous: Recipe</text><line x1="869" y1="293" x2="1021" y2="293" stroke="#3d4556"/><text x="875" y="305" font-size="11" font-family="monospace">+execute(): void</text><text x="875" y="320" font-size="11" font-family="monospace">+undo(): void</text><rect x="1141" y="40" width="424" height="320" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1353.0" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«Singleton»</text><text x="1353.0" y="70" text-anchor="middle" font-weight="700" font-size="12">MealPlannerDB</text><line x1="1141" y1="78" x2="1565" y2="78" stroke="#3d4556"/><text x="1147" y="90" font-size="11" font-family="monospace" text-decoration="underline">-instance: MealPlannerDB</text><text x="1147" y="105" font-size="11" font-family="monospace">-pcs: PropertyChangeSupport</text><text x="1147" y="120" font-size="11" font-family="monospace">-recipes: List&lt;Recipe&gt;</text><text x="1147" y="135" font-size="11" font-family="monospace">-plan: WeekPlan</text><text x="1147" y="150" font-size="11" font-family="monospace">-groceries: GroceryList</text><line x1="1141" y1="157" x2="1565" y2="157" stroke="#3d4556"/><text x="1147" y="169" font-size="11" font-family="monospace">-MealPlannerDB()</text><text x="1147" y="184" font-size="11" font-family="monospace" text-decoration="underline">+getInstance(): MealPlannerDB</text><text x="1147" y="199" font-size="11" font-family="monospace">+reset(): void</text><text x="1147" y="214" font-size="11" font-family="monospace">+getRecipes(): List&lt;Recipe&gt;</text><text x="1147" y="229" font-size="11" font-family="monospace">+addRecipe(r: Recipe): void</text><text x="1147" y="244" font-size="11" font-family="monospace">+updateRecipe(r: Recipe): void</text><text x="1147" y="259" font-size="11" font-family="monospace">+removeRecipe(r: Recipe): void</text><text x="1147" y="274" font-size="11" font-family="monospace">+getMeal(day: String, slot: String): Recipe</text><text x="1147" y="289" font-size="11" font-family="monospace">+setMeal(day: String, slot: String, recipe: Recipe): void</text><text x="1147" y="304" font-size="11" font-family="monospace">+getGroceries(): List&lt;GroceryItem&gt;</text><text x="1147" y="319" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="1147" y="334" font-size="11" font-family="monospace">+addExtra(name: String, amount: double, unit: String): void</text><text x="1147" y="349" font-size="11" font-family="monospace">+addPropertyChangeListener(l: PropertyChangeListener): void</text><line x1="748" y1="217" x2="869" y2="243" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="860.0,236.7 869,243 858.2,245.1" fill="none" stroke="#3d4556"/><text x="808.5" y="226.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«create» </text><line x1="293" y1="240" x2="223" y2="311" stroke="#3d4556"/><polyline points="233.2,306.8 223,311 227.1,300.8" fill="none" stroke="#3d4556"/><text x="229" y="305" font-size="11" fill="#d9480f">1</text><line x1="238" y1="356" x2="868" y2="106" stroke="#3d4556"/><polyline points="857.0,105.8 868,106 860.2,113.7" fill="none" stroke="#3d4556"/><text x="856" y="100" font-size="11" fill="#d9480f">0..*</text><line x1="940" y1="189" x2="936" y2="120" stroke="#3d4556" stroke-dasharray="6 4"/><polygon points="936,120 930.7,132.9 942.8,132.2" fill="white" stroke="#3d4556"/><line x1="1021" y1="248" x2="1141" y2="231" stroke="#3d4556"/><polyline points="1130.4,228.2 1141,231 1131.6,236.7" fill="none" stroke="#3d4556"/><text x="1129" y="225" font-size="11" fill="#d9480f">1</text><text x="1081.0" y="235.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">receiver</text></svg></div>
+<pre class="code"><code>public void execute() {
+    previous = db.getMeal(day, slot);   // onthoud wat er stond
+    db.setMeal(day, slot, recipe);
+}
+public void undo() { db.setMeal(day, slot, previous); }
+
+// CommandHistory
+public void run(Command c) { c.execute(); undoStack.push(c); redoStack.clear(); }</code></pre>
+<details class="qa"><summary>Examenvraag: Waarom wordt de redo-stapel gewist bij een nieuwe actie?</summary><p>Redo betekent "doe opnieuw wat ik net ongedaan maakte". Doe je intussen iets nieuws, dan is de geschiedenis een andere weg ingeslagen en klopt die oude redo niet meer. Daarom ook: bij bewerken of verwijderen van een recept wissen we de hele geschiedenis, want oude commands verwijzen naar de oude versie van het recept.</p></details>
+</div>
+
+<h2 id="diagrammen">Diagrammen</h2>
+<p>Dit zijn previews van precies wat in het Visual Paradigm-bestand zit. Pijlen: <b>volle lijn</b> = associatie (kent/bevat), <b>stippellijn met open driehoek</b> = implementeert interface, <b>stippellijn met pijl</b> = gebruikt/maakt (dependency).</p>
+<h3>1. Full class diagram (volledig klassendiagram)</h3><div class="diagram big"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2323 1105" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="40" y="40" width="199" height="51" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="139.5" y="56" text-anchor="middle" font-weight="700" font-size="12">ViewApp</text><line x1="40" y1="64" x2="239" y2="64" stroke="#3d4556"/><text x="46" y="76" font-size="11" font-family="monospace">+start(stage: Stage): void</text><rect x="40" y="161" width="342" height="110" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="211.0" y="177" text-anchor="middle" font-size="11" fill="#d9480f">«GUI»</text><text x="211.0" y="191" text-anchor="middle" font-weight="700" font-size="12">MainView</text><line x1="40" y1="199" x2="382" y2="199" stroke="#3d4556"/><text x="46" y="211" font-size="11" font-family="monospace">-model: MealPlannerDB</text><text x="46" y="226" font-size="11" font-family="monospace">-controller: PlannerController</text><line x1="40" y1="233" x2="382" y2="233" stroke="#3d4556"/><text x="46" y="245" font-size="11" font-family="monospace">+propertyChange(evt: PropertyChangeEvent): void</text><text x="46" y="260" font-size="11" font-family="monospace">-refresh(): void</text><rect x="40" y="341" width="342" height="65" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="211.0" y="357" text-anchor="middle" font-size="11" fill="#d9480f">«interface»</text><text x="211.0" y="371" text-anchor="middle" font-weight="700" font-size="12" font-style="italic">PropertyChangeListener</text><line x1="40" y1="379" x2="382" y2="379" stroke="#3d4556"/><text x="46" y="391" font-size="11" font-family="monospace">+propertyChange(evt: PropertyChangeEvent): void</text><rect x="472" y="40" width="709" height="201" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="826.5" y="56" text-anchor="middle" font-weight="700" font-size="12">PlannerController</text><line x1="472" y1="64" x2="1181" y2="64" stroke="#3d4556"/><text x="478" y="76" font-size="11" font-family="monospace">-db: MealPlannerDB</text><text x="478" y="91" font-size="11" font-family="monospace">-history: CommandHistory</text><line x1="472" y1="98" x2="1181" y2="98" stroke="#3d4556"/><text x="478" y="110" font-size="11" font-family="monospace">+addRecipe(title: String, description: String, ingredients: String, tags: String): void</text><text x="478" y="125" font-size="11" font-family="monospace">+editRecipe(old: Recipe, title: String, description: String, ingredients: String, tags: String): void</text><text x="478" y="140" font-size="11" font-family="monospace">+removeRecipe(recipe: Recipe): void</text><text x="478" y="155" font-size="11" font-family="monospace">+assignMeal(day: String, slot: String, recipe: Recipe): void</text><text x="478" y="170" font-size="11" font-family="monospace">+clearMeal(day: String, slot: String): void</text><text x="478" y="185" font-size="11" font-family="monospace">+undo(): void</text><text x="478" y="200" font-size="11" font-family="monospace">+redo(): void</text><text x="478" y="215" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="478" y="230" font-size="11" font-family="monospace">+addExtra(name: String, amount: String, unit: String): void</text><rect x="472" y="311" width="199" height="170" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="571.5" y="327" text-anchor="middle" font-size="11" fill="#d9480f">«Invoker»</text><text x="571.5" y="341" text-anchor="middle" font-weight="700" font-size="12">CommandHistory</text><line x1="472" y1="349" x2="671" y2="349" stroke="#3d4556"/><text x="478" y="361" font-size="11" font-family="monospace">-undoStack: Deque&lt;Command&gt;</text><text x="478" y="376" font-size="11" font-family="monospace">-redoStack: Deque&lt;Command&gt;</text><line x1="472" y1="383" x2="671" y2="383" stroke="#3d4556"/><text x="478" y="395" font-size="11" font-family="monospace">+run(c: Command): void</text><text x="478" y="410" font-size="11" font-family="monospace">+undo(): void</text><text x="478" y="425" font-size="11" font-family="monospace">+redo(): void</text><text x="478" y="440" font-size="11" font-family="monospace">+canUndo(): boolean</text><text x="478" y="455" font-size="11" font-family="monospace">+canRedo(): boolean</text><text x="478" y="470" font-size="11" font-family="monospace">+clear(): void</text><rect x="472" y="551" width="131" height="80" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="537.5" y="567" text-anchor="middle" font-size="11" fill="#d9480f">«interface»</text><text x="537.5" y="581" text-anchor="middle" font-weight="700" font-size="12" font-style="italic">Command</text><line x1="472" y1="589" x2="603" y2="589" stroke="#3d4556"/><text x="478" y="601" font-size="11" font-family="monospace">+execute(): void</text><text x="478" y="616" font-size="11" font-family="monospace">+undo(): void</text><rect x="472" y="701" width="152" height="141" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="548.0" y="717" text-anchor="middle" font-weight="700" font-size="12">SetMealCommand</text><line x1="472" y1="725" x2="624" y2="725" stroke="#3d4556"/><text x="478" y="737" font-size="11" font-family="monospace">-db: MealPlannerDB</text><text x="478" y="752" font-size="11" font-family="monospace">-day: String</text><text x="478" y="767" font-size="11" font-family="monospace">-slot: String</text><text x="478" y="782" font-size="11" font-family="monospace">-recipe: Recipe</text><text x="478" y="797" font-size="11" font-family="monospace">-previous: Recipe</text><line x1="472" y1="804" x2="624" y2="804" stroke="#3d4556"/><text x="478" y="816" font-size="11" font-family="monospace">+execute(): void</text><text x="478" y="831" font-size="11" font-family="monospace">+undo(): void</text><rect x="1271" y="40" width="498" height="215" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1520.0" y="56" text-anchor="middle" font-size="11" fill="#d9480f">«Builder»</text><text x="1520.0" y="70" text-anchor="middle" font-weight="700" font-size="12">RecipeBuilder</text><line x1="1271" y1="78" x2="1769" y2="78" stroke="#3d4556"/><text x="1277" y="90" font-size="11" font-family="monospace">-id: String</text><text x="1277" y="105" font-size="11" font-family="monospace">-title: String</text><text x="1277" y="120" font-size="11" font-family="monospace">-description: String</text><text x="1277" y="135" font-size="11" font-family="monospace">-ingredients: List&lt;Ingredient&gt;</text><text x="1277" y="150" font-size="11" font-family="monospace">-tags: List&lt;String&gt;</text><line x1="1271" y1="157" x2="1769" y2="157" stroke="#3d4556"/><text x="1277" y="169" font-size="11" font-family="monospace">+id(id: String): RecipeBuilder</text><text x="1277" y="184" font-size="11" font-family="monospace">+title(t: String): RecipeBuilder</text><text x="1277" y="199" font-size="11" font-family="monospace">+description(d: String): RecipeBuilder</text><text x="1277" y="214" font-size="11" font-family="monospace">+ingredient(name: String, amount: double, unit: String): RecipeBuilder</text><text x="1277" y="229" font-size="11" font-family="monospace">+tag(t: String): RecipeBuilder</text><text x="1277" y="244" font-size="11" font-family="monospace">+build(): Recipe</text><rect x="1271" y="325" width="424" height="320" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1483.0" y="341" text-anchor="middle" font-size="11" fill="#d9480f">«Singleton»</text><text x="1483.0" y="355" text-anchor="middle" font-weight="700" font-size="12">MealPlannerDB</text><line x1="1271" y1="363" x2="1695" y2="363" stroke="#3d4556"/><text x="1277" y="375" font-size="11" font-family="monospace" text-decoration="underline">-instance: MealPlannerDB</text><text x="1277" y="390" font-size="11" font-family="monospace">-pcs: PropertyChangeSupport</text><text x="1277" y="405" font-size="11" font-family="monospace">-recipes: List&lt;Recipe&gt;</text><text x="1277" y="420" font-size="11" font-family="monospace">-plan: WeekPlan</text><text x="1277" y="435" font-size="11" font-family="monospace">-groceries: GroceryList</text><line x1="1271" y1="442" x2="1695" y2="442" stroke="#3d4556"/><text x="1277" y="454" font-size="11" font-family="monospace">-MealPlannerDB()</text><text x="1277" y="469" font-size="11" font-family="monospace" text-decoration="underline">+getInstance(): MealPlannerDB</text><text x="1277" y="484" font-size="11" font-family="monospace">+reset(): void</text><text x="1277" y="499" font-size="11" font-family="monospace">+getRecipes(): List&lt;Recipe&gt;</text><text x="1277" y="514" font-size="11" font-family="monospace">+addRecipe(r: Recipe): void</text><text x="1277" y="529" font-size="11" font-family="monospace">+updateRecipe(r: Recipe): void</text><text x="1277" y="544" font-size="11" font-family="monospace">+removeRecipe(r: Recipe): void</text><text x="1277" y="559" font-size="11" font-family="monospace">+getMeal(day: String, slot: String): Recipe</text><text x="1277" y="574" font-size="11" font-family="monospace">+setMeal(day: String, slot: String, recipe: Recipe): void</text><text x="1277" y="589" font-size="11" font-family="monospace">+getGroceries(): List&lt;GroceryItem&gt;</text><text x="1277" y="604" font-size="11" font-family="monospace">+toggleBought(item: GroceryItem): void</text><text x="1277" y="619" font-size="11" font-family="monospace">+addExtra(name: String, amount: double, unit: String): void</text><text x="1277" y="634" font-size="11" font-family="monospace">+addPropertyChangeListener(l: PropertyChangeListener): void</text><rect x="1271" y="715" width="383" height="215" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1462.5" y="731" text-anchor="middle" font-size="11" fill="#d9480f">«Subject»</text><text x="1462.5" y="745" text-anchor="middle" font-weight="700" font-size="12">WeekPlan</text><line x1="1271" y1="753" x2="1654" y2="753" stroke="#3d4556"/><text x="1277" y="765" font-size="11" font-family="monospace" text-decoration="underline">+DAYS: String[]</text><text x="1277" y="780" font-size="11" font-family="monospace" text-decoration="underline">+SLOTS: String[]</text><text x="1277" y="795" font-size="11" font-family="monospace">-meals: Map&lt;String, Recipe&gt;</text><text x="1277" y="810" font-size="11" font-family="monospace">-observers: List&lt;PlanObserver&gt;</text><line x1="1271" y1="817" x2="1654" y2="817" stroke="#3d4556"/><text x="1277" y="829" font-size="11" font-family="monospace">+get(day: String, slot: String): Recipe</text><text x="1277" y="844" font-size="11" font-family="monospace">+set(day: String, slot: String, recipe: Recipe): void</text><text x="1277" y="859" font-size="11" font-family="monospace">+plannedRecipes(): List&lt;Recipe&gt;</text><text x="1277" y="874" font-size="11" font-family="monospace">+replaceEverywhere(id: String, r: Recipe): void</text><text x="1277" y="889" font-size="11" font-family="monospace">+addObserver(o: PlanObserver): void</text><text x="1277" y="904" font-size="11" font-family="monospace">+removeObserver(o: PlanObserver): void</text><text x="1277" y="919" font-size="11" font-family="monospace">-notifyObservers(): void</text><rect x="1271" y="1000" width="267" height="65" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1404.5" y="1016" text-anchor="middle" font-size="11" fill="#d9480f">«interface»</text><text x="1404.5" y="1030" text-anchor="middle" font-weight="700" font-size="12" font-style="italic">PlanObserver</text><line x1="1271" y1="1038" x2="1538" y2="1038" stroke="#3d4556"/><text x="1277" y="1050" font-size="11" font-family="monospace">+onPlanChanged(plan: WeekPlan): void</text><rect x="1859" y="40" width="260" height="156" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1989.0" y="56" text-anchor="middle" font-weight="700" font-size="12">Recipe</text><line x1="1859" y1="64" x2="2119" y2="64" stroke="#3d4556"/><text x="1865" y="76" font-size="11" font-family="monospace">-id: String</text><text x="1865" y="91" font-size="11" font-family="monospace">-title: String</text><text x="1865" y="106" font-size="11" font-family="monospace">-description: String</text><text x="1865" y="121" font-size="11" font-family="monospace">-ingredients: List&lt;Ingredient&gt;</text><text x="1865" y="136" font-size="11" font-family="monospace">-tags: List&lt;String&gt;</text><line x1="1859" y1="143" x2="2119" y2="143" stroke="#3d4556"/><text x="1865" y="155" font-size="11" font-family="monospace">+getTitle(): String</text><text x="1865" y="170" font-size="11" font-family="monospace">+getIngredients(): List&lt;Ingredient&gt;</text><text x="1865" y="185" font-size="11" font-family="monospace">+hasTag(tag: String): boolean</text><rect x="1859" y="266" width="396" height="111" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="2057.0" y="282" text-anchor="middle" font-weight="700" font-size="12">Ingredient</text><line x1="1859" y1="290" x2="2255" y2="290" stroke="#3d4556"/><text x="1865" y="302" font-size="11" font-family="monospace">-name: String</text><text x="1865" y="317" font-size="11" font-family="monospace">-amount: double</text><text x="1865" y="332" font-size="11" font-family="monospace">-unit: String</text><line x1="1859" y1="339" x2="2255" y2="339" stroke="#3d4556"/><text x="1865" y="351" font-size="11" font-family="monospace">+Ingredient(name: String, amount: double, unit: String)</text><text x="1865" y="366" font-size="11" font-family="monospace">+getAmount(): double</text><rect x="1859" y="447" width="424" height="140" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="2071.0" y="463" text-anchor="middle" font-size="11" fill="#d9480f">«Observer»</text><text x="2071.0" y="477" text-anchor="middle" font-weight="700" font-size="12">GroceryList</text><line x1="1859" y1="485" x2="2283" y2="485" stroke="#3d4556"/><text x="1865" y="497" font-size="11" font-family="monospace">-generated: Map&lt;String, GroceryItem&gt;</text><text x="1865" y="512" font-size="11" font-family="monospace">-extras: List&lt;GroceryItem&gt;</text><line x1="1859" y1="519" x2="2283" y2="519" stroke="#3d4556"/><text x="1865" y="531" font-size="11" font-family="monospace">+onPlanChanged(plan: WeekPlan): void</text><text x="1865" y="546" font-size="11" font-family="monospace">+addExtra(name: String, amount: double, unit: String): void</text><text x="1865" y="561" font-size="11" font-family="monospace">+items(): List&lt;GroceryItem&gt;</text><text x="1865" y="576" font-size="11" font-family="monospace">+amountOf(name: String, unit: String): double</text><rect x="1859" y="657" width="281" height="156" rx="3" fill="#fff8e7" stroke="#3d4556"/><text x="1999.5" y="673" text-anchor="middle" font-weight="700" font-size="12">GroceryItem</text><line x1="1859" y1="681" x2="2140" y2="681" stroke="#3d4556"/><text x="1865" y="693" font-size="11" font-family="monospace">-name: String</text><text x="1865" y="708" font-size="11" font-family="monospace">-amount: double</text><text x="1865" y="723" font-size="11" font-family="monospace">-unit: String</text><text x="1865" y="738" font-size="11" font-family="monospace">-manual: boolean</text><text x="1865" y="753" font-size="11" font-family="monospace">-bought: boolean</text><line x1="1859" y1="760" x2="2140" y2="760" stroke="#3d4556"/><text x="1865" y="772" font-size="11" font-family="monospace">+key(): String</text><text x="1865" y="787" font-size="11" font-family="monospace">+plus(other: GroceryItem): GroceryItem</text><text x="1865" y="802" font-size="11" font-family="monospace">+toggleBought(): void</text><line x1="382" y1="194" x2="471" y2="183" stroke="#3d4556"/><polyline points="460.4,180.0 471,183 461.5,188.5" fill="none" stroke="#3d4556"/><text x="459" y="177" font-size="11" fill="#d9480f">1</text><text x="426.5" y="184.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">calls</text><line x1="382" y1="252" x2="1271" y2="440" stroke="#3d4556"/><polyline points="1262.0,433.7 1271,440 1260.2,442.1" fill="none" stroke="#3d4556"/><text x="1259" y="434" font-size="11" fill="#d9480f">1</text><text x="826.5" y="342.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">reads</text><line x1="211" y1="271" x2="211" y2="340" stroke="#3d4556" stroke-dasharray="6 4"/><polygon points="211,340 217.1,327.4 204.9,327.4" fill="white" stroke="#3d4556"/><line x1="1271" y1="466" x2="382" y2="388" stroke="#3d4556"/><polyline points="391.7,393.2 382,388 392.5,384.6" fill="none" stroke="#3d4556"/><text x="388" y="382" font-size="11" fill="#d9480f">0..*</text><text x="826.5" y="423.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">notifies</text><line x1="1017" y1="240" x2="1271" y2="373" stroke="#3d4556"/><polyline points="1264.0,364.5 1271,373 1260.0,372.1" fill="none" stroke="#3d4556"/><text x="1259" y="367" font-size="11" fill="#d9480f">1</text><line x1="725" y1="240" x2="655" y2="311" stroke="#3d4556"/><polyline points="665.2,306.8 655,311 659.1,300.8" fill="none" stroke="#3d4556"/><text x="661" y="305" font-size="11" fill="#d9480f">1</text><line x1="781" y1="240" x2="579" y2="700" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="587.0,692.4 579,700 579.2,689.0" fill="none" stroke="#3d4556"/><text x="680.0" y="466.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«create» </text><line x1="1180" y1="143" x2="1271" y2="144" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="1260.9,139.6 1271,144 1260.8,148.2" fill="none" stroke="#3d4556"/><text x="1225.5" y="139.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«use» </text><line x1="220" y1="90" x2="1271" y2="418" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="1262.6,410.9 1271,418 1260.1,419.1" fill="none" stroke="#3d4556"/><text x="745.5" y="250.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«use» getInstance()</text><line x1="556" y1="481" x2="543" y2="551" stroke="#3d4556"/><polyline points="549.1,541.8 543,551 540.6,540.3" fill="none" stroke="#3d4556"/><text x="549" y="545" font-size="11" fill="#d9480f">0..*</text><line x1="543" y1="700" x2="539" y2="631" stroke="#3d4556" stroke-dasharray="6 4"/><polygon points="539,631 533.7,643.9 545.8,643.2" fill="white" stroke="#3d4556"/><line x1="624" y1="747" x2="1271" y2="549" stroke="#3d4556"/><polyline points="1260.1,547.9 1271,549 1262.6,556.1" fill="none" stroke="#3d4556"/><text x="1259" y="543" font-size="11" fill="#d9480f">1</text><text x="947.5" y="644.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">receiver</text><line x1="1695" y1="331" x2="1881" y2="196" stroke="#3d4556"/><polyline points="1870.3,198.5 1881,196 1875.3,205.4" fill="none" stroke="#3d4556"/><text x="1869" y="190" font-size="11" fill="#d9480f">0..*</text><line x1="1473" y1="645" x2="1468" y2="714" stroke="#3d4556"/><polyline points="1473.0,704.2 1468,714 1464.5,703.6" fill="none" stroke="#3d4556"/><text x="1474" y="708" font-size="11" fill="#d9480f">1</text><line x1="1695" y1="496" x2="1859" y2="505" stroke="#3d4556"/><polyline points="1849.1,500.2 1859,505 1848.6,508.7" fill="none" stroke="#3d4556"/><text x="1847" y="499" font-size="11" fill="#d9480f">1</text><line x1="1769" y1="131" x2="1859" y2="126" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="1848.6,122.3 1859,126 1849.1,130.8" fill="none" stroke="#3d4556"/><text x="1814.0" y="124.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«create» </text><line x1="2015" y1="196" x2="2038" y2="265" stroke="#3d4556"/><polyline points="2038.9,254.0 2038,265 2030.7,256.7" fill="none" stroke="#3d4556"/><text x="2026" y="259" font-size="11" fill="#d9480f">1..*</text><line x1="1432" y1="929" x2="1412" y2="999" stroke="#3d4556"/><polyline points="1418.9,990.4 1412,999 1410.7,988.1" fill="none" stroke="#3d4556"/><text x="1418" y="993" font-size="11" fill="#d9480f">0..*</text><text x="1422.0" y="960.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">notifies</text><line x1="1542" y1="714" x2="1930" y2="196" stroke="#3d4556"/><polyline points="1920.5,201.5 1930,196 1927.4,206.7" fill="none" stroke="#3d4556"/><text x="1918" y="190" font-size="11" fill="#d9480f">0..*</text><text x="1736.0" y="451.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">planned</text><line x1="1980" y1="587" x2="1446" y2="999" stroke="#3d4556" stroke-dasharray="6 4"/><polygon points="1446,999 1459.7,996.1 1452.3,986.5" fill="white" stroke="#3d4556"/><line x1="2047" y1="587" x2="2024" y2="657" stroke="#3d4556"/><polyline points="2031.2,648.7 2024,657 2023.1,646.0" fill="none" stroke="#3d4556"/><text x="2030" y="651" font-size="11" fill="#d9480f">0..*</text></svg></div>
+<h3>7. Use-case-diagram</h3><p>Eén actor (de gebruiker). "Update grocery list" doet de gebruiker nooit zelf: het systeem doet het automatisch, daarom is het een <b>«include»</b> van elke plan-wijziging.</p><div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1020" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="260" y="20" width="700" height="960" fill="#fbfbfd" stroke="#3d4556"/><text x="610.0" y="40" text-anchor="middle" font-weight="700" font-size="13">Smart Meal Planner</text><ellipse cx="455.0" cy="87.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="91.5" text-anchor="middle" font-size="12">Add recipe</text><ellipse cx="455.0" cy="162.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="166.5" text-anchor="middle" font-size="12">View recipes</text><ellipse cx="455.0" cy="237.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="241.5" text-anchor="middle" font-size="12">Edit recipe</text><ellipse cx="455.0" cy="312.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="316.5" text-anchor="middle" font-size="12">Remove recipe</text><ellipse cx="455.0" cy="387.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="391.5" text-anchor="middle" font-size="12">Plan recipe (day + meal)</text><ellipse cx="455.0" cy="462.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="466.5" text-anchor="middle" font-size="12">View week plan</text><ellipse cx="455.0" cy="537.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="541.5" text-anchor="middle" font-size="12">Change planned meal</text><ellipse cx="455.0" cy="612.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="616.5" text-anchor="middle" font-size="12">Remove planned meal</text><ellipse cx="455.0" cy="687.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="691.5" text-anchor="middle" font-size="12">Undo / redo</text><ellipse cx="455.0" cy="762.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="766.5" text-anchor="middle" font-size="12">View grocery list</text><ellipse cx="455.0" cy="837.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="841.5" text-anchor="middle" font-size="12">Tick item as bought</text><ellipse cx="455.0" cy="912.5" rx="135.0" ry="27.5" fill="#fff8e7" stroke="#3d4556"/><text x="455.0" y="916.5" text-anchor="middle" font-size="12">Add extra item</text><ellipse cx="805.0" cy="540.0" rx="125.0" ry="30.0" fill="#fff8e7" stroke="#3d4556"/><text x="805.0" y="544.0" text-anchor="middle" font-size="12">Update grocery list</text><circle cx="80.0" cy="480" r="9" fill="none" stroke="#3d4556" stroke-width="1.5"/><path d="M80.0,489 v28 M64.0,498 h32 M80.0,517 l-13,22 M80.0,517 l13,22" stroke="#3d4556" stroke-width="1.5" fill="none"/><text x="80.0" y="564" text-anchor="middle" font-size="12">User</text><line x1="100" y1="487" x2="431" y2="114" stroke="#3d4556"/><polyline points="421.1,118.7 431,114 427.5,124.4" fill="none" stroke="#3d4556"/><line x1="100" y1="491" x2="426" y2="188" stroke="#3d4556"/><polyline points="415.7,191.8 426,188 421.5,198.0" fill="none" stroke="#3d4556"/><line x1="100" y1="495" x2="418" y2="263" stroke="#3d4556"/><polyline points="407.3,265.5 418,263 412.3,272.4" fill="none" stroke="#3d4556"/><line x1="100" y1="499" x2="406" y2="337" stroke="#3d4556"/><polyline points="395.0,338.0 406,337 399.0,345.5" fill="none" stroke="#3d4556"/><line x1="100" y1="503" x2="383" y2="410" stroke="#3d4556"/><polyline points="372.0,409.1 383,410 374.7,417.2" fill="none" stroke="#3d4556"/><line x1="100" y1="507" x2="340" y2="476" stroke="#3d4556"/><polyline points="329.4,473.0 340,476 330.5,481.5" fill="none" stroke="#3d4556"/><line x1="100" y1="511" x2="327" y2="527" stroke="#3d4556"/><polyline points="317.2,522.0 327,527 316.6,530.6" fill="none" stroke="#3d4556"/><line x1="100" y1="515" x2="374" y2="589" stroke="#3d4556"/><polyline points="365.3,582.2 374,589 363.1,590.5" fill="none" stroke="#3d4556"/><line x1="100" y1="519" x2="401" y2="661" stroke="#3d4556"/><polyline points="393.7,652.8 401,661 390.0,660.6" fill="none" stroke="#3d4556"/><line x1="100" y1="523" x2="415" y2="735" stroke="#3d4556"/><polyline points="409.0,725.8 415,735 404.2,732.9" fill="none" stroke="#3d4556"/><line x1="100" y1="527" x2="424" y2="810" stroke="#3d4556"/><polyline points="419.2,800.1 424,810 413.6,806.6" fill="none" stroke="#3d4556"/><line x1="100" y1="531" x2="429" y2="884" stroke="#3d4556"/><polyline points="425.2,873.7 429,884 419.0,879.5" fill="none" stroke="#3d4556"/><line x1="512" y1="411" x2="744" y2="513" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="736.4,505.0 744,513 733.0,512.8" fill="none" stroke="#3d4556"/><text x="628.0" y="458.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«include» </text><line x1="589" y1="538" x2="680" y2="538" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="669.9,533.7 680,538 669.9,542.3" fill="none" stroke="#3d4556"/><text x="634.5" y="534.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«include» </text><line x1="549" y1="592" x2="710" y2="559" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="699.2,556.8 710,559 700.9,565.2" fill="none" stroke="#3d4556"/><text x="629.5" y="571.5" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«include» </text><line x1="513" y1="662" x2="742" y2="566" stroke="#3d4556" stroke-dasharray="6 4"/><polyline points="731.0,566.0 742,566 734.3,573.9" fill="none" stroke="#3d4556"/><text x="627.5" y="610.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">«include» </text></svg></div>
+<h3>8. Sequence: plan a recipe (sequentiediagram)</h3><p>De use case die de meeste patronen tegelijk raakt: MVC, Command, Singleton en Observer.</p><div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1560 820" font-family="Segoe UI, Arial, sans-serif" fill="#1f2430"><rect x="40" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="115.0" y="61" text-anchor="middle" font-size="12" font-weight="700">User</text><line x1="115.0" y1="74" x2="115.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="230" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="305.0" y="61" text-anchor="middle" font-size="12" font-weight="700">:MainView</text><line x1="305.0" y1="74" x2="305.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="420" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="495.0" y="61" text-anchor="middle" font-size="12" font-weight="700">:PlannerController</text><line x1="495.0" y1="74" x2="495.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="610" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="685.0" y="61" text-anchor="middle" font-size="12" font-weight="700">:CommandHistory</text><line x1="685.0" y1="74" x2="685.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="800" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="875.0" y="61" text-anchor="middle" font-size="12" font-weight="700">:SetMealCommand</text><line x1="875.0" y1="74" x2="875.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="990" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="1065.0" y="61" text-anchor="middle" font-size="12" font-weight="700">:MealPlannerDB</text><line x1="1065.0" y1="74" x2="1065.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="1180" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="1255.0" y="61" text-anchor="middle" font-size="12" font-weight="700">:WeekPlan</text><line x1="1255.0" y1="74" x2="1255.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="1370" y="40" width="150" height="34" fill="#fff8e7" stroke="#3d4556"/><text x="1445.0" y="61" text-anchor="middle" font-size="12" font-weight="700">:GroceryList</text><line x1="1445.0" y1="74" x2="1445.0" y2="780" stroke="#3d4556" stroke-dasharray="5 4"/><rect x="111" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><rect x="301" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><rect x="491" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><rect x="681" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><rect x="871" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><rect x="1061" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><rect x="1251" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><rect x="1441" y="115" width="8" height="650" fill="white" stroke="#3d4556"/><line x1="119" y1="140" x2="301" y2="140" stroke="#3d4556"/><polygon points="301,140 290.9,135.7 290.9,144.3" fill="#3d4556"/><text x="210.0" y="135.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">choose Pasta for Monday dinner</text><line x1="309" y1="200" x2="491" y2="200" stroke="#3d4556"/><polygon points="491,200 480.9,195.7 480.9,204.3" fill="#3d4556"/><text x="400.0" y="195.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">assignMeal(&quot;Monday&quot;, &quot;Dinner&quot;, pasta)</text><line x1="499" y1="260" x2="871" y2="260" stroke="#3d4556"/><polygon points="871,260 860.9,255.7 860.9,264.3" fill="#3d4556"/><text x="685.0" y="255.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">new SetMealCommand(db, day, slot, recipe)</text><line x1="499" y1="320" x2="681" y2="320" stroke="#3d4556"/><polygon points="681,320 670.9,315.7 670.9,324.3" fill="#3d4556"/><text x="590.0" y="315.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">run(cmd)</text><line x1="689" y1="380" x2="871" y2="380" stroke="#3d4556"/><polygon points="871,380 860.9,375.7 860.9,384.3" fill="#3d4556"/><text x="780.0" y="375.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">execute()</text><line x1="879" y1="440" x2="1061" y2="440" stroke="#3d4556"/><polygon points="1061,440 1050.9,435.7 1050.9,444.3" fill="#3d4556"/><text x="970.0" y="435.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">getMeal(day, slot)  [= previous]</text><line x1="879" y1="500" x2="1061" y2="500" stroke="#3d4556"/><polygon points="1061,500 1050.9,495.7 1050.9,504.3" fill="#3d4556"/><text x="970.0" y="495.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">setMeal(day, slot, recipe)</text><line x1="1069" y1="560" x2="1251" y2="560" stroke="#3d4556"/><polygon points="1251,560 1240.9,555.7 1240.9,564.3" fill="#3d4556"/><text x="1160.0" y="555.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">set(day, slot, recipe)</text><line x1="1259" y1="620" x2="1441" y2="620" stroke="#3d4556"/><polygon points="1441,620 1430.9,615.7 1430.9,624.3" fill="#3d4556"/><text x="1350.0" y="615.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">onPlanChanged(plan)  [sum ingredients]</text><line x1="1061" y1="680" x2="309" y2="680" stroke="#3d4556"/><polygon points="309,680 319.1,684.3 319.1,675.7" fill="#3d4556"/><text x="685.0" y="675.0" text-anchor="middle" font-size="11" fill="#1f2430" paint-order="stroke" stroke="white" stroke-width="3">propertyChange(&quot;plan&quot;)  [refresh()]</text></svg></div>
+<p>De mini-diagrammen 2 tot 6 staan bij elk patroon hierboven.</p>
+
+<h2 id="uml">UML importeren in Visual Paradigm</h2>
+<div class="card">
+<p>Het bestand <a href="uml/MealPlanner_VP_project.xml"><code>docs/uml/MealPlanner_VP_project.xml</code></a> heeft <b>exact hetzelfde formaat</b> als jullie lab-export (<code>UML/Lab2/project.xml</code>, VP 16.1). Het bevat alle klassen, relaties en de 8 diagrammen met hun indeling.</p>
+<ol><li>Open Visual Paradigm en maak een <b>nieuw, leeg project</b>.</li>
+<li>Menu <b>Project → Import → XML...</b> (in sommige versies: <i>File → Import → XML</i>).</li>
+<li>Kies <code>MealPlanner_VP_project.xml</code> en bevestig.</li>
+<li>Open in de Diagram Navigator de 8 diagrammen (1. Full class diagram ... 8. Sequence: plan a recipe).</li>
+<li>Tip: selecteer alles in een klassendiagram en kies <i>Fit Size</i> als een klasse te smal is; versleep klassen gerust voor een mooiere indeling.</li></ol>
+<div class="warn"><b>Eerlijk:</b> ik kon Visual Paradigm zelf niet openen om de import te testen. Het bestand is gemaakt door echte elementen uit jullie eigen VP-export te kopiëren en aan te passen, en alle interne verwijzingen zijn automatisch gecontroleerd. Lukt de import toch niet, laat het me weten met de foutmelding. De SVG-previews in <code>docs/uml/svg/</code> tonen dan hoe elk diagram eruit moet zien, zodat je ze kunt natekenen.</div>
+<p><b>Inleveren:</b> na import kun je in VP opnieuw <i>Export → XML</i> doen voor de zip, net zoals bij de labs.</p></div>
+
+<h2 id="verdediging">Vragen voor de verdediging</h2>
+<p>Klik een vraag open om het antwoord te zien. Probeer eerst zelf.</p><details class="qa"><summary>Wat is het verschil tussen de Observer van MVC en jullie eigen Observer?</summary><p>MVC: model → View via PropertyChange (scherm hertekenen). Eigen Observer: WeekPlan → GroceryList binnen het model (lijst herberekenen). De tweede werkt zelfs zonder scherm.</p></details><details class="qa"><summary>Pasta staat twee keer in het plan. Waar wordt dat dubbel geteld?</summary><p><code>WeekPlan.plannedRecipes()</code> geeft een <b>List</b> (geen Set), dus pasta zit er twee keer in. <code>GroceryList.onPlanChanged</code> loopt over elk ingrediënt en doet <code>merge(...)</code> met <code>GroceryItem::plus</code>.</p></details><details class="qa"><summary>Hoe blijven vinkjes staan als de lijst herberekend wordt?</summary><p>Na het optellen kijkt <code>onPlanChanged</code> voor elk nieuw item of het oude item met dezelfde sleutel aangevinkt was. Zo ja, dan wordt het nieuwe item ook aangevinkt.</p></details><details class="qa"><summary>Wat gebeurt er als je een recept verwijdert dat in het plan staat?</summary><p><code>MealPlannerDB.removeRecipe</code> roept <code>plan.replaceEverywhere(id, null)</code>: het recept verdwijnt uit elk moment, het plan verwittigt de lijst (die krimpt) en de undo-geschiedenis wordt gewist.</p></details><details class="qa"><summary>Wat onthoudt SetMealCommand om correct te kunnen undo&#x27;en?</summary><p>Het veld <code>previous</code>: het recept dat er vóór <code>execute()</code> stond (of <code>null</code>). <code>undo()</code> zet dat terug.</p></details><details class="qa"><summary>Hoe test je een Singleton als die tussen tests blijft bestaan?</summary><p>Met <code>db.reset()</code> in <code>@BeforeEach</code>. En de controller krijgt de DB via de constructor, zodat de test zelf bepaalt welk object gebruikt wordt.</p></details><details class="qa"><summary>Waarom heeft Recipe geen setters?</summary><p>Zo kan na <code>build()</code> niemand het recept nog stiekem aanpassen (de builder heeft het al gecontroleerd). Bewerken = een nieuw recept bouwen met hetzelfde id.</p></details><details class="qa"><summary>Waar had Strategy kunnen passen?</summary><p>Bij een knop "vul lege momenten automatisch": RandomFill, VegetarianFill, QuickFill als verwisselbare algoritmes achter één interface. Niet nodig, want Command is al ons extra patroon.</p></details>
+
+<h2 id="codebank">Codebank: alle code</h2>
+<p>In dezelfde volgorde als het stappenplan. Alles staat ook al in <code>project/src</code>. Klik een bestand open; met "Kopiëren" zet je het op je klembord.</p>
+<details class="file"><summary><span class="fname">Ingredient.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/Ingredient.java</span><span class="flines">31 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+/** One line of a recipe, e.g. 100 g pasta. kg and l are converted to g and ml right away. */
+public class Ingredient {
+    private final String name;
+    private final double amount;
+    private final String unit;   // always &quot;g&quot;, &quot;ml&quot; or &quot;piece&quot;
+
+    public Ingredient(String name, double amount, String unit) {
+        name = name.trim().toLowerCase();               // &quot;Pasta &quot; and &quot;pasta&quot; are the same
+        unit = unit.trim().toLowerCase();
+        if (name.isEmpty() || amount &lt;= 0) throw new IllegalArgumentException(&quot;Invalid ingredient: &quot; + name);
+        if (unit.equals(&quot;kg&quot;)) { amount *= 1000; unit = &quot;g&quot;; }    // 0.2 kg -&gt; 200 g
+        if (unit.equals(&quot;l&quot;))  { amount *= 1000; unit = &quot;ml&quot;; }   // 0.5 l  -&gt; 500 ml
+        if (!unit.equals(&quot;g&quot;) &amp;&amp; !unit.equals(&quot;ml&quot;) &amp;&amp; !unit.equals(&quot;piece&quot;))
+            throw new IllegalArgumentException(&quot;Unknown unit: &quot; + unit + &quot; (use g, kg, ml, l or piece)&quot;);
+        this.name = name;
+        this.amount = amount;
+        this.unit = unit;
+    }
+
+    public String getName() { return name; }
+    public double getAmount() { return amount; }
+    public String getUnit() { return unit; }
+
+    @Override
+    public String toString() { return format(amount) + &quot; &quot; + unit + &quot; &quot; + name; }
+
+    /** 200.0 -&gt; &quot;200&quot;, 1.5 -&gt; &quot;1.5&quot; */
+    public static String format(double d) { return d == (long) d ? String.valueOf((long) d) : String.valueOf(d); }
+}
+</code></pre></details><details class="file"><summary><span class="fname">Recipe.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/Recipe.java</span><span class="flines">32 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+import java.util.List;
+
+/** A recipe. Create it with the RecipeBuilder. It does not change after it is built. */
+public class Recipe {
+    private final String id;
+    private final String title;
+    private final String description;
+    private final List&lt;Ingredient&gt; ingredients;
+    private final List&lt;String&gt; tags;
+
+    // not &quot;public&quot;: only the RecipeBuilder (same package) creates recipes
+    Recipe(String id, String title, String description, List&lt;Ingredient&gt; ingredients, List&lt;String&gt; tags) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.ingredients = ingredients;
+        this.tags = tags;
+    }
+
+    public String getId() { return id; }
+    public String getTitle() { return title; }
+    public String getDescription() { return description; }
+    public List&lt;Ingredient&gt; getIngredients() { return ingredients; }
+    public List&lt;String&gt; getTags() { return tags; }
+
+    public boolean hasTag(String tag) { return tags.contains(tag.toLowerCase()); }
+
+    @Override
+    public String toString() { return title; }   // this is how ListView and ComboBox show the title
+}
+</code></pre></details><details class="file"><summary><span class="fname">RecipeBuilderUTest.java</span><span class="fpath">project/src/test/java/be/uantwerpen/sd/project/model/RecipeBuilderUTest.java</span><span class="flines">37 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+import org.junit.jupiter.api.Test;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class RecipeBuilderUTest {
+
+    @Test
+    void buildsCompleteRecipe() {
+        String id = &quot;recipe-1&quot;;
+        Recipe r = new RecipeBuilder().id(id).title(&quot; Pasta &quot;).description(&quot;tasty&quot;)
+                .ingredient(&quot;pasta&quot;, 100, &quot;g&quot;).tag(&quot; Vegetarian &quot;).tag(&quot; &quot;).build();
+        assertEquals(id, r.getId());
+        assertEquals(&quot;Pasta&quot;, r.getTitle());
+        assertEquals(&quot;tasty&quot;, r.getDescription());
+        assertEquals(1, r.getIngredients().size());
+        assertTrue(r.hasTag(&quot;vegetarian&quot;));
+        assertEquals(1, r.getTags().size());               // empty tag is ignored
+        assertEquals(&quot;Pasta&quot;, r.toString());
+    }
+
+    @Test
+    void blankTitleOrNoIngredientsIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -&gt; new RecipeBuilder().ingredient(&quot;x&quot;, 1, &quot;g&quot;).build());
+        assertThrows(IllegalArgumentException.class, () -&gt; new RecipeBuilder().title(&quot;Empty&quot;).build());
+        assertThrows(IllegalArgumentException.class, () -&gt; new RecipeBuilder().ingredient(&quot;x&quot;, 0, &quot;g&quot;));
+    }
+
+    @Test
+    void resultIsUnmodifiable() {
+        Recipe r = new RecipeBuilder().title(&quot;A&quot;).ingredient(&quot;x&quot;, 1, &quot;g&quot;).build();
+        assertThrows(UnsupportedOperationException.class, () -&gt; r.getIngredients().clear());
+        assertThrows(UnsupportedOperationException.class, () -&gt; r.getTags().add(&quot;new&quot;));
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">RecipeBuilder.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/RecipeBuilder.java</span><span class="flines">42 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * BUILDER: builds a Recipe step by step.
+ *   new RecipeBuilder().title(&quot;Pasta&quot;).ingredient(&quot;pasta&quot;, 100, &quot;g&quot;).tag(&quot;quick&quot;).build();
+ */
+public class RecipeBuilder {
+    private String id = UUID.randomUUID().toString();
+    private String title = &quot;&quot;;
+    private String description = &quot;&quot;;
+    private final List&lt;Ingredient&gt; ingredients = new ArrayList&lt;&gt;();
+    private final List&lt;String&gt; tags = new ArrayList&lt;&gt;();
+
+    /** Only needed when editing: the recipe keeps its old id. */
+    public RecipeBuilder id(String id) { this.id = id; return this; }
+
+    public RecipeBuilder title(String title) { this.title = title.trim(); return this; }
+
+    public RecipeBuilder description(String description) { this.description = description.trim(); return this; }
+
+    public RecipeBuilder ingredient(String name, double amount, String unit) {
+        ingredients.add(new Ingredient(name, amount, unit));
+        return this;
+    }
+
+    public RecipeBuilder tag(String tag) {
+        String t = tag.trim().toLowerCase();
+        if (!t.isEmpty() &amp;&amp; !tags.contains(t)) tags.add(t);
+        return this;
+    }
+
+    /** Checks everything and only then returns the recipe. */
+    public Recipe build() {
+        if (title.isEmpty()) throw new IllegalArgumentException(&quot;A recipe needs a title.&quot;);
+        if (ingredients.isEmpty()) throw new IllegalArgumentException(&quot;A recipe needs at least one ingredient.&quot;);
+        return new Recipe(id, title, description, List.copyOf(ingredients), List.copyOf(tags));
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">PlanObserver.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/PlanObserver.java</span><span class="flines">6 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+/** OBSERVER: whoever implements this is told every time the week plan changes. */
+public interface PlanObserver {
+    void onPlanChanged(WeekPlan plan);
+}
+</code></pre></details><details class="file"><summary><span class="fname">WeekPlan.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/WeekPlan.java</span><span class="flines">48 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * The week plan: 7 days x 4 meals.
+ * OBSERVER (subject): on every change it notifies its PlanObservers.
+ */
+public class WeekPlan {
+    public static final String[] DAYS = {&quot;Monday&quot;, &quot;Tuesday&quot;, &quot;Wednesday&quot;, &quot;Thursday&quot;, &quot;Friday&quot;, &quot;Saturday&quot;, &quot;Sunday&quot;};
+    public static final String[] SLOTS = {&quot;Breakfast&quot;, &quot;Lunch&quot;, &quot;Dinner&quot;, &quot;Snack&quot;};
+
+    private final Map&lt;String, Recipe&gt; meals = new HashMap&lt;&gt;();   // key e.g. &quot;Monday Dinner&quot;
+    private final List&lt;PlanObserver&gt; observers = new ArrayList&lt;&gt;();
+
+    public Recipe get(String day, String slot) { return meals.get(day + &quot; &quot; + slot); }
+
+    /** Puts a recipe on a meal. recipe == null means: remove the meal. */
+    public void set(String day, String slot, Recipe recipe) {
+        if (recipe == null) meals.remove(day + &quot; &quot; + slot);
+        else meals.put(day + &quot; &quot; + slot, recipe);
+        notifyObservers();
+    }
+
+    /** All planned recipes. A list, so pasta planned twice counts twice. */
+    public List&lt;Recipe&gt; plannedRecipes() { return new ArrayList&lt;&gt;(meals.values()); }
+
+    /** After editing a recipe: put the new version everywhere (null = remove everywhere). */
+    public void replaceEverywhere(String id, Recipe replacement) {
+        for (String key : new ArrayList&lt;&gt;(meals.keySet())) {
+            if (!meals.get(key).getId().equals(id)) continue;
+            if (replacement == null) meals.remove(key);
+            else meals.put(key, replacement);
+        }
+        notifyObservers();
+    }
+
+    public void addObserver(PlanObserver o) { observers.add(o); }
+
+    public void removeObserver(PlanObserver o) { observers.remove(o); }
+
+    private void notifyObservers() {
+        for (PlanObserver o : observers) o.onPlanChanged(this);
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">GroceryItem.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/GroceryItem.java</span><span class="flines">36 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+/** One line on the grocery list. */
+public class GroceryItem {
+    private final String name;
+    private final double amount;
+    private final String unit;      // base unit: &quot;g&quot;, &quot;ml&quot; or &quot;piece&quot;
+    private final boolean manual;   // true = added by hand (extra)
+    private boolean bought;
+
+    public GroceryItem(String name, double amount, String unit, boolean manual) {
+        this.name = name;
+        this.amount = amount;
+        this.unit = unit;
+        this.manual = manual;
+    }
+
+    /** &quot;pasta|g&quot;: same key = same line on the list. */
+    public String key() { return name + &quot;|&quot; + unit; }
+
+    /** 100 g pasta + 100 g pasta = 200 g pasta */
+    public GroceryItem plus(GroceryItem other) { return new GroceryItem(name, amount + other.amount, unit, manual); }
+
+    public void toggleBought() { bought = !bought; }
+
+    public String getName() { return name; }
+    public double getAmount() { return amount; }
+    public String getUnit() { return unit; }
+    public boolean isManual() { return manual; }
+    public boolean isBought() { return bought; }
+
+    @Override
+    public String toString() {
+        return Ingredient.format(amount) + &quot; &quot; + unit + &quot; &quot; + name + (manual ? &quot;  (extra)&quot; : &quot;&quot;);
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">GroceryListUTest.java</span><span class="fpath">project/src/test/java/be/uantwerpen/sd/project/model/GroceryListUTest.java</span><span class="flines">88 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/** Full unit test of GroceryList (every method and every if branch). */
+class GroceryListUTest {
+    private WeekPlan plan;
+    private GroceryList list;
+    private Recipe pasta;
+
+    @BeforeEach
+    void setUp() {
+        plan = new WeekPlan();
+        list = new GroceryList();
+        plan.addObserver(list);
+        pasta = new RecipeBuilder().title(&quot;Pasta&quot;).ingredient(&quot;pasta&quot;, 100, &quot;g&quot;).ingredient(&quot;onion&quot;, 1, &quot;piece&quot;).build();
+    }
+
+    @Test
+    void emptyPlanGivesEmptyList() {
+        assertTrue(list.items().isEmpty());
+        assertEquals(0, list.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+    }
+
+    @Test
+    void sameRecipeTwiceIsSummed() {
+        plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+        plan.set(&quot;Thursday&quot;, &quot;Dinner&quot;, pasta);
+        assertEquals(200, list.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+        assertEquals(2, list.amountOf(&quot;onion&quot;, &quot;piece&quot;));
+    }
+
+    @Test
+    void kilogramsAreConvertedToGramsAndNamesNormalised() {
+        Recipe big = new RecipeBuilder().title(&quot;Lots of pasta&quot;).ingredient(&quot; Pasta &quot;, 0.1, &quot;kg&quot;).build();
+        plan.set(&quot;Monday&quot;, &quot;Lunch&quot;, pasta);
+        plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, big);
+        assertEquals(200, list.amountOf(&quot;pasta&quot;, &quot;g&quot;), 1e-9);
+    }
+
+    @Test
+    void differentBaseUnitsStaySeparateLines() {
+        Recipe r = new RecipeBuilder().title(&quot;Mix&quot;).ingredient(&quot;milk&quot;, 1, &quot;l&quot;).ingredient(&quot;milk&quot;, 50, &quot;g&quot;).build();
+        plan.set(&quot;Friday&quot;, &quot;Breakfast&quot;, r);
+        assertEquals(1000, list.amountOf(&quot;milk&quot;, &quot;ml&quot;));
+        assertEquals(50, list.amountOf(&quot;milk&quot;, &quot;g&quot;));
+        assertEquals(2, list.items().size());
+    }
+
+    @Test
+    void removingAMealShrinksTheList() {
+        plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+        plan.set(&quot;Tuesday&quot;, &quot;Dinner&quot;, pasta);
+        plan.set(&quot;Tuesday&quot;, &quot;Dinner&quot;, null);
+        assertEquals(100, list.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+        plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, null);
+        assertTrue(list.items().isEmpty());
+    }
+
+    @Test
+    void boughtTickSurvivesRecalculation() {
+        plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+        list.items().get(1).toggleBought();              // items are alphabetical: [onion, pasta] -&gt; tick &quot;pasta&quot;
+        plan.set(&quot;Tuesday&quot;, &quot;Dinner&quot;, pasta);            // list is recalculated
+        assertEquals(&quot;pasta&quot;, list.items().get(1).getName());
+        assertTrue(list.items().get(1).isBought());      // &quot;pasta&quot; is still ticked
+        assertFalse(list.items().get(0).isBought());     // &quot;onion&quot; was not ticked
+    }
+
+    @Test
+    void extrasAreKeptAndShownLast() {
+        list.addExtra(&quot; Dish soap &quot;, 1, &quot;piece&quot;);
+        plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+        GroceryItem last = list.items().get(list.items().size() - 1);
+        assertEquals(&quot;dish soap&quot;, last.getName());
+        assertTrue(last.isManual());
+        assertEquals(&quot;1 piece dish soap  (extra)&quot;, last.toString());
+    }
+
+    @Test
+    void invalidExtraIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -&gt; list.addExtra(&quot; &quot;, 1, &quot;piece&quot;));
+        assertThrows(IllegalArgumentException.class, () -&gt; list.addExtra(&quot;bread&quot;, 0, &quot;piece&quot;));
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">GroceryList.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/GroceryList.java</span><span class="flines">48 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+import java.util.*;
+
+/**
+ * The grocery list.
+ * OBSERVER (observer): listens to the WeekPlan and recalculates itself.
+ */
+public class GroceryList implements PlanObserver {
+    private final Map&lt;String, GroceryItem&gt; generated = new TreeMap&lt;&gt;(); // from the plan, alphabetical
+    private final List&lt;GroceryItem&gt; extras = new ArrayList&lt;&gt;();         // added by hand
+
+    @Override
+    public void onPlanChanged(WeekPlan plan) {
+        Map&lt;String, GroceryItem&gt; fresh = new TreeMap&lt;&gt;();
+        for (Recipe recipe : plan.plannedRecipes()) {
+            for (Ingredient i : recipe.getIngredients()) {
+                GroceryItem item = new GroceryItem(i.getName(), i.getAmount(), i.getUnit(), false);
+                fresh.merge(item.key(), item, GroceryItem::plus);   // same key? -&gt; add up
+            }
+        }
+        // keep the &quot;bought&quot; ticks for items that are still on the list
+        for (GroceryItem item : fresh.values()) {
+            GroceryItem old = generated.get(item.key());
+            if (old != null &amp;&amp; old.isBought()) item.toggleBought();
+        }
+        generated.clear();
+        generated.putAll(fresh);
+    }
+
+    public void addExtra(String name, double amount, String unit) {
+        if (name.isBlank() || amount &lt;= 0) throw new IllegalArgumentException(&quot;Enter a name and an amount &gt; 0.&quot;);
+        extras.add(new GroceryItem(name.trim().toLowerCase(), amount, unit.trim(), true));
+    }
+
+    /** First the calculated items, then the extras. */
+    public List&lt;GroceryItem&gt; items() {
+        List&lt;GroceryItem&gt; all = new ArrayList&lt;&gt;(generated.values());
+        all.addAll(extras);
+        return all;
+    }
+
+    /** Total of an ingredient in its base unit (0 if it is not on the list). */
+    public double amountOf(String name, String unit) {
+        GroceryItem item = generated.get(name + &quot;|&quot; + unit);
+        return item == null ? 0 : item.getAmount();
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">MealPlannerDB.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/model/MealPlannerDB.java</span><span class="flines">89 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.model;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * The MODEL of MVC: the one place that holds all data.
+ * SINGLETON (thread-safe): the same instance everywhere via getInstance().
+ */
+public final class MealPlannerDB {
+    private static volatile MealPlannerDB instance;   // volatile: every thread sees the new value immediately
+
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final List&lt;Recipe&gt; recipes = new ArrayList&lt;&gt;();
+    private WeekPlan plan;
+    private GroceryList groceries;
+
+    private MealPlannerDB() { reset(); }               // private: nobody else can call &quot;new&quot;
+
+    public static MealPlannerDB getInstance() {
+        if (instance == null) {                         // 1st check: fast, without a lock
+            synchronized (MealPlannerDB.class) {        // lock: only one thread at a time
+                if (instance == null) {                 // 2nd check: maybe another thread was faster
+                    instance = new MealPlannerDB();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /** Clears everything. Useful for tests, because the singleton stays alive. */
+    public void reset() {
+        recipes.clear();
+        plan = new WeekPlan();
+        groceries = new GroceryList();
+        plan.addObserver(groceries);                    // OBSERVER: the list follows the plan
+        pcs.firePropertyChange(&quot;reset&quot;, null, null);
+    }
+
+    // ---------- recipes ----------
+    public List&lt;Recipe&gt; getRecipes() { return List.copyOf(recipes); }
+
+    public void addRecipe(Recipe r) {
+        recipes.add(r);
+        pcs.firePropertyChange(&quot;recipes&quot;, null, r);
+    }
+
+    public void updateRecipe(Recipe updated) {
+        recipes.replaceAll(r -&gt; r.getId().equals(updated.getId()) ? updated : r);
+        plan.replaceEverywhere(updated.getId(), updated);  // use the new version in the plan too
+        pcs.firePropertyChange(&quot;recipes&quot;, null, updated);
+    }
+
+    public void removeRecipe(Recipe r) {
+        recipes.removeIf(x -&gt; x.getId().equals(r.getId()));
+        plan.replaceEverywhere(r.getId(), null);           // remove from the plan -&gt; list shrinks too
+        pcs.firePropertyChange(&quot;recipes&quot;, r, null);
+    }
+
+    // ---------- week plan ----------
+    public Recipe getMeal(String day, String slot) { return plan.get(day, slot); }
+
+    public void setMeal(String day, String slot, Recipe recipe) {
+        plan.set(day, slot, recipe);                    // -&gt; WeekPlan notifies GroceryList
+        pcs.firePropertyChange(&quot;plan&quot;, null, recipe);   // -&gt; MVC: the View redraws
+    }
+
+    // ---------- groceries ----------
+    public List&lt;GroceryItem&gt; getGroceries() { return groceries.items(); }
+
+    public double amountOf(String name, String unit) { return groceries.amountOf(name, unit); }
+
+    public void toggleBought(GroceryItem item) {
+        item.toggleBought();
+        pcs.firePropertyChange(&quot;groceries&quot;, null, item);
+    }
+
+    public void addExtra(String name, double amount, String unit) {
+        groceries.addExtra(name, amount, unit);
+        pcs.firePropertyChange(&quot;groceries&quot;, null, name);
+    }
+
+    // ---------- MVC: the View subscribes here ----------
+    public void addPropertyChangeListener(PropertyChangeListener l) { pcs.addPropertyChangeListener(l); }
+
+    public void removePropertyChangeListener(PropertyChangeListener l) { pcs.removePropertyChangeListener(l); }
+}
+</code></pre></details><details class="file"><summary><span class="fname">Command.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/command/Command.java</span><span class="flines">8 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.command;
+
+/** COMMAND: an action as an object, which you can also undo. */
+public interface Command {
+    void execute();
+
+    void undo();
+}
+</code></pre></details><details class="file"><summary><span class="fname">SetMealCommand.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/command/SetMealCommand.java</span><span class="flines">29 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.command;
+
+import be.uantwerpen.sd.project.model.MealPlannerDB;
+import be.uantwerpen.sd.project.model.Recipe;
+
+/** Puts a recipe on a day + meal (recipe == null = remove the meal). */
+public class SetMealCommand implements Command {
+    private final MealPlannerDB db;   // the &quot;receiver&quot;: it does the real work
+    private final String day;    // e.g. &quot;Monday&quot;
+    private final String slot;   // e.g. &quot;Dinner&quot;
+    private final Recipe recipe;
+    private Recipe previous;          // what was there before, needed for undo
+
+    public SetMealCommand(MealPlannerDB db, String day, String slot, Recipe recipe) {
+        this.db = db;
+        this.day = day;
+        this.slot = slot;
+        this.recipe = recipe;
+    }
+
+    @Override
+    public void execute() {
+        previous = db.getMeal(day, slot);
+        db.setMeal(day, slot, recipe);
+    }
+
+    @Override
+    public void undo() { db.setMeal(day, slot, previous); }
+}
+</code></pre></details><details class="file"><summary><span class="fname">CommandHistoryUTest.java</span><span class="fpath">project/src/test/java/be/uantwerpen/sd/project/command/CommandHistoryUTest.java</span><span class="flines">49 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.command;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class CommandHistoryUTest {
+
+    /** Small fake command: counts how often it is &quot;on&quot;. */
+    static class Counter implements Command {
+        int value;
+        public void execute() { value++; }
+        public void undo() { value--; }
+    }
+
+    @Test
+    void runUndoRedo() {
+        CommandHistory h = new CommandHistory();
+        Counter c = new Counter();
+        h.run(c);
+        assertEquals(1, c.value);
+        h.undo();
+        assertEquals(0, c.value);
+        assertTrue(h.canRedo());
+        h.redo();
+        assertEquals(1, c.value);
+        assertTrue(h.canUndo());
+    }
+
+    @Test
+    void emptyHistoryDoesNothing() {
+        CommandHistory h = new CommandHistory();
+        h.undo();
+        h.redo();
+        assertFalse(h.canUndo());
+        assertFalse(h.canRedo());
+    }
+
+    @Test
+    void newCommandClearsRedo() {
+        CommandHistory h = new CommandHistory();
+        h.run(new Counter());
+        h.undo();
+        h.run(new Counter());
+        assertFalse(h.canRedo());
+        h.clear();
+        assertFalse(h.canUndo());
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">CommandHistory.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/command/CommandHistory.java</span><span class="flines">39 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.command;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+/** COMMAND (invoker): runs commands and remembers them for undo/redo. */
+public class CommandHistory {
+    private final Deque&lt;Command&gt; undoStack = new ArrayDeque&lt;&gt;();
+    private final Deque&lt;Command&gt; redoStack = new ArrayDeque&lt;&gt;();
+
+    public void run(Command c) {
+        c.execute();
+        undoStack.push(c);
+        redoStack.clear();            // new action -&gt; the old &quot;redo&quot; no longer makes sense
+    }
+
+    public void undo() {
+        if (undoStack.isEmpty()) return;
+        Command c = undoStack.pop();
+        c.undo();
+        redoStack.push(c);
+    }
+
+    public void redo() {
+        if (redoStack.isEmpty()) return;
+        Command c = redoStack.pop();
+        c.execute();
+        undoStack.push(c);
+    }
+
+    public boolean canUndo() { return !undoStack.isEmpty(); }
+
+    public boolean canRedo() { return !redoStack.isEmpty(); }
+
+    public void clear() {
+        undoStack.clear();
+        redoStack.clear();
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">PlannerController.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/controller/PlannerController.java</span><span class="flines">62 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.controller;
+
+import be.uantwerpen.sd.project.command.CommandHistory;
+import be.uantwerpen.sd.project.command.SetMealCommand;
+import be.uantwerpen.sd.project.model.*;
+
+/** The CONTROLLER of MVC: turns clicks from the View into requests to the model. */
+public class PlannerController {
+    private final MealPlannerDB db;
+    private final CommandHistory history;
+
+    public PlannerController(MealPlannerDB db, CommandHistory history) {
+        this.db = db;
+        this.history = history;
+    }
+
+    // ---------- recipes ----------
+    public void addRecipe(String title, String description, String ingredients, String tags) {
+        db.addRecipe(build(new RecipeBuilder(), title, description, ingredients, tags));
+    }
+
+    public void editRecipe(Recipe old, String title, String description, String ingredients, String tags) {
+        db.updateRecipe(build(new RecipeBuilder().id(old.getId()), title, description, ingredients, tags));
+        history.clear();   // old undo steps know the old recipe, so clear them
+    }
+
+    public void removeRecipe(Recipe recipe) {
+        db.removeRecipe(recipe);
+        history.clear();
+    }
+
+    // ---------- week plan (via COMMAND, so it can be undone) ----------
+    public void assignMeal(String day, String slot, Recipe recipe) {
+        history.run(new SetMealCommand(db, day, slot, recipe));
+    }
+
+    public void clearMeal(String day, String slot) { assignMeal(day, slot, null); }
+
+    public void undo() { history.undo(); }
+
+    public void redo() { history.redo(); }
+
+    // ---------- groceries ----------
+    public void toggleBought(GroceryItem item) { db.toggleBought(item); }
+
+    public void addExtra(String name, String amount, String unit) {
+        db.addExtra(name, Double.parseDouble(amount.trim().replace(&#x27;,&#x27;, &#x27;.&#x27;)), unit);
+    }
+
+    /** Form text -&gt; Recipe. Ingredients: one per line, e.g. &quot;200 g pasta&quot;. */
+    private Recipe build(RecipeBuilder b, String title, String description, String ingredients, String tags) {
+        b.title(title).description(description);
+        for (String line : ingredients.split(&quot;\\R&quot;)) {
+            if (line.isBlank()) continue;
+            String[] p = line.trim().split(&quot;\\s+&quot;, 3);   // [amount, unit, name]
+            if (p.length &lt; 3) throw new IllegalArgumentException(&quot;Write ingredients like: 200 g pasta&quot;);
+            b.ingredient(p[2], Double.parseDouble(p[0].replace(&#x27;,&#x27;, &#x27;.&#x27;)), p[1]);
+        }
+        for (String tag : tags.split(&quot;,&quot;)) b.tag(tag);
+        return b.build();
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">MainView.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/view/MainView.java</span><span class="flines">172 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project.view;
+
+import be.uantwerpen.sd.project.controller.PlannerController;
+import be.uantwerpen.sd.project.model.*;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.stream.Collectors;
+
+/**
+ * The VIEW of MVC: draws everything and passes clicks on to the controller.
+ * Listens (PropertyChangeListener) to the model and redraws on every change.
+ */
+public class MainView extends TabPane implements PropertyChangeListener {
+    private final MealPlannerDB model;
+    private final PlannerController controller;
+
+    // tab 1: recipes
+    private final ListView&lt;Recipe&gt; recipeList = new ListView&lt;&gt;();
+    private final TextField title = new TextField();
+    private final TextArea description = new TextArea();
+    private final TextArea ingredients = new TextArea();
+    private final TextField tags = new TextField();
+    // tab 2: week plan (7 days x 4 meals)
+    private final ComboBox&lt;Recipe&gt;[][] cells = new ComboBox[7][4];
+    private boolean refreshing;   // true while WE fill the combo boxes -&gt; do not send commands
+    // tab 3: groceries
+    private final VBox groceryBox = new VBox(6);
+
+    public MainView(MealPlannerDB model, PlannerController controller) {
+        this.model = model;
+        this.controller = controller;
+        getTabs().addAll(recipesTab(), planTab(), groceryTab());
+        setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+        model.addPropertyChangeListener(this);   // MVC observer: notify me on every change
+        refresh();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) { refresh(); }
+
+    // ======================= Tab 1: recipes =======================
+    private Tab recipesTab() {
+        title.setPromptText(&quot;Title&quot;);
+        description.setPromptText(&quot;Description&quot;);
+        ingredients.setPromptText(&quot;One per line, e.g.   200 g pasta   /   2 piece egg   /   0.5 l milk&quot;);
+        tags.setPromptText(&quot;Tags, separated by commas (vegetarian, quick)&quot;);
+        description.setPrefRowCount(2);
+
+        recipeList.getSelectionModel().selectedItemProperty().addListener((obs, old, r) -&gt; fillForm(r));
+
+        Button add = new Button(&quot;Add&quot;);
+        Button save = new Button(&quot;Save changes&quot;);
+        Button remove = new Button(&quot;Remove&quot;);
+        Button clear = new Button(&quot;Clear form&quot;);
+        add.setOnAction(e -&gt; safe(() -&gt; controller.addRecipe(title.getText(), description.getText(), ingredients.getText(), tags.getText())));
+        save.setOnAction(e -&gt; withSelected(r -&gt; controller.editRecipe(r, title.getText(), description.getText(), ingredients.getText(), tags.getText())));
+        remove.setOnAction(e -&gt; withSelected(controller::removeRecipe));
+        clear.setOnAction(e -&gt; recipeList.getSelectionModel().clearSelection());
+
+        VBox form = new VBox(8, new Label(&quot;Recipe&quot;), title, description, new Label(&quot;Ingredients&quot;), ingredients,
+                tags, new HBox(8, add, save, remove, clear));
+        HBox root = new HBox(12, recipeList, form);
+        HBox.setHgrow(form, Priority.ALWAYS);
+        root.setPadding(new Insets(12));
+        return new Tab(&quot;Recipes&quot;, root);
+    }
+
+    private void fillForm(Recipe r) {
+        title.setText(r == null ? &quot;&quot; : r.getTitle());
+        description.setText(r == null ? &quot;&quot; : r.getDescription());
+        ingredients.setText(r == null ? &quot;&quot; : r.getIngredients().stream().map(Ingredient::toString).collect(Collectors.joining(&quot;\n&quot;)));
+        tags.setText(r == null ? &quot;&quot; : String.join(&quot;, &quot;, r.getTags()));
+    }
+
+    private void withSelected(java.util.function.Consumer&lt;Recipe&gt; action) {
+        Recipe r = recipeList.getSelectionModel().getSelectedItem();
+        if (r == null) showError(&quot;Select a recipe first.&quot;);
+        else safe(() -&gt; action.accept(r));
+    }
+
+    // ======================= Tab 2: week plan =======================
+    private Tab planTab() {
+        GridPane grid = new GridPane();
+        grid.setHgap(6);
+        grid.setVgap(6);
+        for (int d = 0; d &lt; 7; d++) {
+            String day = WeekPlan.DAYS[d];
+            grid.add(new Label(day), d + 1, 0);
+            for (int s = 0; s &lt; 4; s++) {
+                String slot = WeekPlan.SLOTS[s];
+                if (d == 0) grid.add(new Label(slot), 0, s + 1);
+                ComboBox&lt;Recipe&gt; combo = new ComboBox&lt;&gt;();
+                combo.setPrefWidth(120);
+                combo.setOnAction(e -&gt; {
+                    if (!refreshing &amp;&amp; combo.getValue() != model.getMeal(day, slot))
+                        controller.assignMeal(day, slot, combo.getValue());
+                });
+                Button x = new Button(&quot;✕&quot;);
+                x.setOnAction(e -&gt; controller.clearMeal(day, slot));
+                cells[d][s] = combo;
+                grid.add(new HBox(2, combo, x), d + 1, s + 1);
+            }
+        }
+        Button undo = new Button(&quot;↶ Undo&quot;);
+        Button redo = new Button(&quot;↷ Redo&quot;);
+        undo.setOnAction(e -&gt; controller.undo());
+        redo.setOnAction(e -&gt; controller.redo());
+        ScrollPane scroll = new ScrollPane(grid);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        VBox root = new VBox(12, scroll, new HBox(8, undo, redo));
+        root.setPadding(new Insets(12));
+        return new Tab(&quot;Week plan&quot;, root);
+    }
+
+    // ======================= Tab 3: groceries =======================
+    private Tab groceryTab() {
+        TextField amount = new TextField();
+        TextField unit = new TextField();
+        TextField name = new TextField();
+        amount.setPromptText(&quot;amount&quot;);
+        unit.setPromptText(&quot;unit (g, ml, piece)&quot;);
+        name.setPromptText(&quot;name, e.g. dish soap&quot;);
+        Button add = new Button(&quot;Add extra&quot;);
+        add.setOnAction(e -&gt; safe(() -&gt; {
+            controller.addExtra(name.getText(), amount.getText(), unit.getText());
+            name.clear();
+            amount.clear();
+            unit.clear();
+        }));
+        ScrollPane scroll = new ScrollPane(groceryBox);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        VBox root = new VBox(12, new Label(&quot;Calculated automatically from your week plan:&quot;), scroll,
+                new HBox(8, amount, unit, name, add));
+        root.setPadding(new Insets(12));
+        return new Tab(&quot;Groceries&quot;, root);
+    }
+
+    // ======================= redraw everything =======================
+    private void refresh() {
+        refreshing = true;
+        recipeList.getItems().setAll(model.getRecipes());
+        for (int d = 0; d &lt; 7; d++) {
+            for (int s = 0; s &lt; 4; s++) {
+                cells[d][s].getItems().setAll(model.getRecipes());
+                cells[d][s].setValue(model.getMeal(WeekPlan.DAYS[d], WeekPlan.SLOTS[s]));
+            }
+        }
+        groceryBox.getChildren().clear();
+        for (GroceryItem item : model.getGroceries()) {
+            CheckBox box = new CheckBox(item.toString());
+            box.setSelected(item.isBought());
+            box.setOnAction(e -&gt; controller.toggleBought(item));
+            groceryBox.getChildren().add(box);
+        }
+        refreshing = false;
+    }
+
+    /** Runs an action and shows invalid input as a pop-up instead of crashing. */
+    private void safe(Runnable action) {
+        try {
+            action.run();
+        } catch (IllegalArgumentException ex) {
+            showError(ex.getMessage());
+        }
+    }
+
+    private void showError(String message) { new Alert(Alert.AlertType.ERROR, message).showAndWait(); }
+}
+</code></pre></details><details class="file"><summary><span class="fname">ViewApp.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/ViewApp.java</span><span class="flines">34 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project;
+
+import be.uantwerpen.sd.project.command.CommandHistory;
+import be.uantwerpen.sd.project.controller.PlannerController;
+import be.uantwerpen.sd.project.model.MealPlannerDB;
+import be.uantwerpen.sd.project.view.MainView;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+/** Starts the app and connects Model, View and Controller. */
+public class ViewApp extends Application {
+
+    public static void main(String[] args) { launch(args); }
+
+    @Override
+    public void start(Stage stage) {
+        MealPlannerDB model = MealPlannerDB.getInstance();                               // M
+        PlannerController controller = new PlannerController(model, new CommandHistory()); // C
+        addDemoRecipes(controller);
+        MainView view = new MainView(model, controller);                                  // V
+
+        stage.setTitle(&quot;Smart Meal Planner&quot;);
+        stage.setScene(new Scene(view, 1300, 560));
+        stage.show();
+    }
+
+    /** A few recipes so you see something right away. */
+    private static void addDemoRecipes(PlannerController c) {
+        c.addRecipe(&quot;Pasta pomodoro&quot;, &quot;Weeknight classic&quot;, &quot;100 g pasta\n200 ml passata\n1 piece onion&quot;, &quot;vegetarian, quick&quot;);
+        c.addRecipe(&quot;Porridge&quot;, &quot;Warm breakfast&quot;, &quot;60 g oats\n0.25 l milk&quot;, &quot;vegetarian, budget&quot;);
+        c.addRecipe(&quot;Omelette&quot;, &quot;Quick and simple&quot;, &quot;3 piece egg\n20 g cheese&quot;, &quot;quick&quot;);
+    }
+}
+</code></pre></details><details class="file"><summary><span class="fname">Launcher.java</span><span class="fpath">project/src/main/java/be/uantwerpen/sd/project/Launcher.java</span><span class="flines">11 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project;
+
+/**
+ * Starts the app from IntelliJ: run THIS class (green arrow next to main).
+ * Why? If the class with main() itself &quot;extends Application&quot;, Java checks whether
+ * JavaFX is loaded as a module and otherwise says &quot;JavaFX runtime components are missing&quot;.
+ * A plain class that does not extend Application skips that check.
+ */
+public class Launcher {
+    public static void main(String[] args) { ViewApp.main(args); }
+}
+</code></pre></details><details class="file"><summary><span class="fname">PlannerIT.java</span><span class="fpath">project/src/test/java/be/uantwerpen/sd/project/PlannerIT.java</span><span class="flines">80 regels</span></summary>
+<button class="copy" onclick="copyCode(this)">Kopiëren</button><pre class="code"><code>package be.uantwerpen.sd.project;
+
+import be.uantwerpen.sd.project.command.CommandHistory;
+import be.uantwerpen.sd.project.controller.PlannerController;
+import be.uantwerpen.sd.project.model.MealPlannerDB;
+import be.uantwerpen.sd.project.model.Recipe;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/** Integration test: controller + singleton model + commands + observer together. */
+class PlannerIT {
+    private MealPlannerDB db;
+    private PlannerController controller;
+    private final List&lt;PropertyChangeEvent&gt; events = new ArrayList&lt;&gt;();
+
+    @BeforeEach
+    void setUp() {
+        db = MealPlannerDB.getInstance();
+        db.reset();
+        controller = new PlannerController(db, new CommandHistory());
+        db.addPropertyChangeListener(events::add);   // plays the &quot;View&quot;
+    }
+
+    @Test
+    void singletonIsAlwaysTheSameObject() {
+        assertSame(db, MealPlannerDB.getInstance());
+    }
+
+    @Test
+    void planTwiceSumsAndUndoRedoUpdatesTheList() {
+        controller.addRecipe(&quot;Pasta&quot;, &quot;&quot;, &quot;100 g pasta\n1 piece onion&quot;, &quot;quick&quot;);
+        Recipe pasta = db.getRecipes().get(0);
+
+        controller.assignMeal(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+        controller.assignMeal(&quot;Thursday&quot;, &quot;Dinner&quot;, pasta);
+        assertEquals(200, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+
+        controller.undo();
+        assertEquals(100, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+        controller.redo();
+        assertEquals(200, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+
+        controller.clearMeal(&quot;Monday&quot;, &quot;Dinner&quot;);
+        assertNull(db.getMeal(&quot;Monday&quot;, &quot;Dinner&quot;));
+        assertEquals(100, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+        assertTrue(events.stream().anyMatch(e -&gt; e.getPropertyName().equals(&quot;plan&quot;)));
+    }
+
+    @Test
+    void editingAndRemovingARecipeUpdatesPlanAndList() {
+        controller.addRecipe(&quot;Pasta&quot;, &quot;&quot;, &quot;100 g pasta&quot;, &quot;&quot;);
+        Recipe pasta = db.getRecipes().get(0);
+        controller.assignMeal(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+
+        controller.editRecipe(pasta, &quot;Pasta XL&quot;, &quot;&quot;, &quot;0.3 kg pasta&quot;, &quot;&quot;);
+        assertEquals(&quot;Pasta XL&quot;, db.getMeal(&quot;Monday&quot;, &quot;Dinner&quot;).getTitle());
+        assertEquals(300, db.amountOf(&quot;pasta&quot;, &quot;g&quot;), 1e-9);
+
+        controller.removeRecipe(db.getRecipes().get(0));
+        assertTrue(db.getRecipes().isEmpty());
+        assertNull(db.getMeal(&quot;Monday&quot;, &quot;Dinner&quot;));
+        assertTrue(db.getGroceries().isEmpty());
+    }
+
+    @Test
+    void groceryTicksAndExtrasThroughController() {
+        controller.addExtra(&quot;bread&quot;, &quot;1&quot;, &quot;piece&quot;);
+        controller.toggleBought(db.getGroceries().get(0));
+        assertTrue(db.getGroceries().get(0).isBought());
+        assertThrows(IllegalArgumentException.class, () -&gt; controller.addExtra(&quot;milk&quot;, &quot;lots&quot;, &quot;l&quot;));
+        assertThrows(IllegalArgumentException.class, () -&gt; controller.addRecipe(&quot;Wrong&quot;, &quot;&quot;, &quot;pasta&quot;, &quot;&quot;));
+        assertThrows(IllegalArgumentException.class, () -&gt; controller.addRecipe(&quot;Wrong&quot;, &quot;&quot;, &quot;100 kilo pasta&quot;, &quot;&quot;));
+    }
+}
+</code></pre></details>
+<p style="margin-top:40px;color:var(--soft);font-size:13px">Gemaakt met hulp van AI (Claude). Vermeld dit in jullie AI-logboek. Structuur gebaseerd op labs 3, 4b en 5 en op jullie eigen plan (meal-planner-plan.html).</p>
+</main>
+<script>
+function copyCode(b){const t=b.parentElement.querySelector('pre').innerText;navigator.clipboard.writeText(t).then(()=>{b.textContent='Gekopieerd ✓';setTimeout(()=>b.textContent='Kopiëren',1500)})}
+</script></body></html>
