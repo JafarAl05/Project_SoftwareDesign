@@ -42,19 +42,28 @@ details.qa summary{cursor:pointer;font-weight:600}
 .layer.v{border-color:#1c7ed6;background:#eef5ff}.layer.c{border-color:#7048e8;background:#f3f0ff}.layer.m{border-color:#2b8a3e;background:#ebfbee}
 .layer h4{margin:0 0 6px}
 @media(max-width:900px){nav{display:none}main{margin-left:0;padding:20px}.layers{grid-template-columns:1fr}}
+
+.walk{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px;align-items:start;margin:12px 0;border-top:1px dashed var(--line);padding-top:12px}
+.walk pre.code{margin:0}.walk .why{font-size:15px}.walk .why ol{margin:6px 0;padding-left:20px}
+@media(max-width:1000px){.walk{grid-template-columns:1fr}}
+.cls .clshead{display:flex;gap:12px;align-items:center}.cls .clshead h3{margin:0}.cls .num{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.cls .one{font-size:16px}.small{font-size:14px;color:var(--soft)}
+ol.route li{margin:4px 0}ol.trace li{margin:5px 0}
+table.primer td:first-child{white-space:nowrap}
 </style></head><body>
 <nav><b>🍝 Meal Planner</b>
 <div class="grp">Begin hier</div><a href="#start">Het project in 1 minuut</a><a href="#eisen">Wat moet er allemaal in?</a><a href="#lagen">Het grote plaatje</a>
 <div class="grp">Stappenplan</div><a href="#blok1">1. Project klaarzetten</a><a href="#blok2">2. Het hart: recepten (Builder)</a><a href="#blok3">3. Het weekplan en de automatische lijst (Observer)</a><a href="#blok4">4. Eén centrale database (Singleton + MVC-model)</a><a href="#blok5">5. Undo en redo (Command)</a><a href="#blok6">6. De Controller</a><a href="#blok7">7. De View en de start (JavaFX)</a><a href="#blok8">8. Tests</a><a href="#blok9">9. UML in Visual Paradigm</a><a href="#blok10">10. Inleveren en verdedigen</a>
 <div class="grp">Theorie</div><a href="#patronen">Patronen, eenvoudig</a><a href="#p-mvc">MVC</a><a href="#p-singleton">Singleton</a><a href="#p-observer">Observer</a><a href="#p-builder">Builder</a><a href="#p-command">Command</a>
+<div class="grp">De code lezen</div><a href="#lezen">Leesvolgorde</a><a href="#java">Java-spiekbriefje</a><a href="#lees-1">1. Ingredient</a><a href="#lees-2">2. Recipe</a><a href="#lees-3">3. RecipeBuilder</a><a href="#lees-4">4. PlanObserver + WeekPlan</a><a href="#lees-5">5. GroceryItem</a><a href="#lees-6">6. GroceryList</a><a href="#lees-7">7. MealPlannerDB</a><a href="#lees-8">8. Command, SetMealCommand, CommandHistory</a><a href="#lees-9">9. PlannerController</a><a href="#lees-10">10. IngredientRow</a><a href="#lees-11">11. MainView</a><a href="#lees-12">12. ViewApp, Launcher en style.css</a><a href="#lees-13">13. De tests</a><a href="#klik">Volg één klik</a>
 <div class="grp">Diagrammen</div><a href="#diagrammen">Klassen, use case, sequentie</a><a href="#uml">UML importeren in VP</a>
 <div class="grp">Afronden</div><a href="#verdediging">Verdedigingsvragen</a><a href="#codebank">Codebank (alle code)</a>
 </nav><main>
 <p class="pill">5-Software Design · Project optie 1</p>
 <h1 id="start">Smart Meal Planner, stap voor stap uitgelegd</h1>
-<p class="lead">De code, de app en de UML zijn in het <b>Engels</b> (voor de prof); deze uitleg is in het Nederlands. Een JavaFX-app met drie tabbladen: een receptenboek, een weekplan (7 dagen × 4 momenten) en een boodschappenlijst die zichzelf uitrekent. Deze pagina legt uit <b>wat</b> we bouwen, <b>in welke volgorde</b>, en <b>waarom</b> elk patroon op die plek staat. Onderaan vind je alle code en de UML-bestanden.</p>
+<p class="lead">De code, de app en de UML zijn in het <b>Engels</b> (voor de prof); deze uitleg is in het Nederlands. Een JavaFX-app met drie tabbladen: een receptenboek, een weekplan (7 dagen × 4 momenten) en een boodschappenlijst die zichzelf uitrekent. Deze pagina legt uit <b>wat</b> we bouwen, <b>in welke volgorde</b>, <b>waarom</b> elk patroon op die plek staat, en <b>hoe je de code zelf leest</b> (klasse per klasse, stuk per stuk). Onderaan vind je alle code en de UML-bestanden.</p>
 <div class="grid">
-<div class="card"><b>15 gewone klassen</b><br>± 700 regels, geen enums of records, met Nederlandse uitleg in de comments.</div>
+<div class="card"><b>16 gewone klassen</b><br>± 800 regels, geen enums of records, met korte Engelse comments.</div>
 <div class="card"><b>5 patronen</b><br>MVC · Singleton · Observer · Builder · Command</div>
 <div class="card"><b>18 tests, allemaal groen</b><br>3 unit-testklassen + 1 integratietest</div>
 <div class="card"><b>8 UML-diagrammen</b><br>als Visual Paradigm XML, klaar om te importeren</div></div>
@@ -187,6 +196,550 @@ public void undo() { db.setMeal(day, slot, previous); }
 public void run(Command c) { c.execute(); undoStack.push(c); redoStack.clear(); }</code></pre>
 <details class="qa"><summary>Examenvraag: Waarom wordt de redo-stapel gewist bij een nieuwe actie?</summary><p>Redo betekent "doe opnieuw wat ik net ongedaan maakte". Doe je intussen iets nieuws, dan is de geschiedenis een andere weg ingeslagen en klopt die oude redo niet meer. Daarom ook: bij bewerken of verwijderen van een recept wissen we de hele geschiedenis, want oude commands verwijzen naar de oude versie van het recept.</p></details>
 </div>
+
+<h2 id="lezen">De code lezen: in welke volgorde en hoe</h2>
+<p>Lees de code <b>van binnen naar buiten</b>: eerst de kleine model-klassen zonder scherm, dan de klassen die ze gebruiken, en het scherm als laatste. Elke klasse bouwt dan voort op iets wat je al kent. Per klasse krijg je: wat ze doet in één zin, wie ze gebruikt, en daarna de code <b>stuk per stuk</b> met links de code en rechts wat er gebeurt.</p>
+<div class="tip"><b>Hoe je één bestand leest:</b> (1) de comment bovenaan (<code>/** ... */</code>) zegt wat de klasse is en welk patroon; (2) de velden bovenaan zeggen wat ze <b>onthoudt</b>; (3) de constructor zegt wat ze <b>nodig heeft</b>; (4) de publieke methodes zeggen wat ze <b>kan</b>. Imports en getters mag je overslaan.</div>
+<ol class="route"><li><a href="#lees-1"><b>Ingredient</b></a> <span class="pill b">model</span> de kleinste bouwsteen</li><li><a href="#lees-2"><b>Recipe</b></a> <span class="pill b">model</span> een recept = ingrediënten + info</li><li><a href="#lees-3"><b>RecipeBuilder</b></a> <span class="pill b">model · Builder</span> hoe een recept gemaakt wordt</li><li><a href="#lees-4"><b>PlanObserver + WeekPlan</b></a> <span class="pill b">model · Observer</span> het weekrooster dat anderen verwittigt</li><li><a href="#lees-5"><b>GroceryItem</b></a> <span class="pill b">model</span> één regel op de lijst</li><li><a href="#lees-6"><b>GroceryList</b></a> <span class="pill b">model · Observer</span> de lijst die zichzelf optelt</li><li><a href="#lees-7"><b>MealPlannerDB</b></a> <span class="pill b">model · Singleton + MVC</span> alles samen op één plek</li><li><a href="#lees-8"><b>Command, SetMealCommand, CommandHistory</b></a> <span class="pill b">command · Command</span> undo en redo</li><li><a href="#lees-9"><b>PlannerController</b></a> <span class="pill b">controller · MVC</span> van klik naar opdracht</li><li><a href="#lees-10"><b>IngredientRow</b></a> <span class="pill b">view</span> één ingrediëntenrij in het formulier</li><li><a href="#lees-11"><b>MainView</b></a> <span class="pill b">view · MVC</span> het hele scherm</li><li><a href="#lees-12"><b>ViewApp, Launcher en style.css</b></a> <span class="pill b">start</span> alles aan elkaar knopen</li><li><a href="#lees-13"><b>De tests</b></a> <span class="pill b">test</span> bewijzen dat het werkt</li></ol>
+<h3 id="java">Java-spiekbriefje: de stukjes syntax die je gaat tegenkomen</h3>
+
+<table class="primer"><tr><th>Je ziet</th><th>Het betekent</th></tr>
+<tr><td><code>private final String name;</code></td><td>Een veld. <code>private</code> = alleen deze klasse mag eraan. <code>final</code> = wordt één keer ingevuld (in de constructor) en verandert daarna nooit.</td></tr>
+<tr><td><code>public Recipe getTitle()</code></td><td>Een <b>getter</b>: geeft een veld terug zodat andere klassen het kunnen lezen, maar niet aanpassen.</td></tr>
+<tr><td><code>static</code></td><td>Hoort bij de <b>klasse zelf</b>, niet bij één object. <code>WeekPlan.DAYS</code> bestaat één keer, hoeveel weekplannen je ook maakt.</td></tr>
+<tr><td><code>List&lt;Recipe&gt;</code>, <code>Map&lt;String, Recipe&gt;</code></td><td>Een lijst van recepten; een "woordenboek" dat een tekst (sleutel) koppelt aan een recept (waarde).</td></tr>
+<tr><td><code>String[]</code> en <code>String[][]</code></td><td>Een rij teksten; een tabel teksten (rij van rijen). Wij gebruiken <code>String[][]</code> voor de ingrediëntenrijen: elke rij is <code>{hoeveelheid, eenheid, naam}</code>.</td></tr>
+<tr><td><code>a ? b : c</code></td><td>Korte if: "als a, dan b, anders c". Bv. <code>r == null ? "" : r.getTitle()</code>.</td></tr>
+<tr><td><code>return this;</code></td><td>Geeft het object zelf terug, zodat je methodes kunt <b>aaneenrijgen</b>: <code>.title(..).tag(..).build()</code> (Builder).</td></tr>
+<tr><td><code>e -&gt; controller.undo()</code></td><td>Een <b>lambda</b>: een stukje code dat je doorgeeft om later uit te voeren ("als er geklikt wordt, doe dan dit").</td></tr>
+<tr><td><code>GroceryItem::plus</code></td><td>Een <b>methode-referentie</b>: korte schrijfwijze voor <code>(a, b) -&gt; a.plus(b)</code>.</td></tr>
+<tr><td><code>throw new IllegalArgumentException("...")</code></td><td>Stopt meteen met een foutmelding. De View vangt die op en toont een pop-up.</td></tr>
+<tr><td><code>implements PlanObserver</code></td><td>Deze klasse belooft alle methodes van de interface te hebben (hier <code>onPlanChanged</code>).</td></tr>
+<tr><td><code>@Override</code></td><td>"Deze methode komt uit een interface of ouderklasse." De compiler controleert of de naam klopt.</td></tr>
+</table>
+<div class="card cls" id="lees-1"><div class="clshead"><span class="num">1</span><div><h3>Ingredient</h3>
+<span class="pill">model</span></div></div>
+<p class="one"><b>In één zin:</b> één regel uit een recept, bv. <i>100 g pasta</i>: een naam, een hoeveelheid (geheel getal) en een eenheid.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>RecipeBuilder</code> maakt ze, <code>GroceryList</code> leest ze om op te tellen, <code>IngredientRow</code> toont ze.</p>
+<div class="walk"><pre class="code"><code>public static final String[] UNITS = {&quot;g&quot;, &quot;ml&quot;, &quot;piece&quot;};   // the choices in the unit dropdown</code></pre><div class="why">De drie toegestane eenheden. Deze lijst wordt ook gebruikt om de <b>dropdown</b> te vullen in het scherm: zo staat de keuze maar op één plek. <code>static final</code> = één vaste lijst voor iedereen.</div></div><div class="walk"><pre class="code"><code>private final String name;
+private final int amount;
+private final String unit;</code></pre><div class="why">De drie velden. Allemaal <code>final</code>: een ingrediënt verandert nooit meer na het maken. <code>amount</code> is een <code>int</code>, dus 100, niet 100.0.</div></div><div class="walk"><pre class="code"><code>public Ingredient(String name, int amount, String unit) {
+    name = name.trim().toLowerCase();               // &quot;Pasta &quot; and &quot;pasta&quot; are the same
+    if (name.isEmpty() || amount &lt;= 0) throw new IllegalArgumentException(&quot;Invalid ingredient: &quot; + name);
+    if (!java.util.List.of(UNITS).contains(unit)) throw new IllegalArgumentException(&quot;Unknown unit: &quot; + unit);
+    this.name = name;
+    this.amount = amount;
+    this.unit = unit;</code></pre><div class="why">De <b>constructor</b> is de poortwachter. Lees hem van boven naar onder:<ol><li>de naam wordt opgekuist (<code>trim</code> haalt spaties weg, <code>toLowerCase</code> maakt alles klein), zodat "Pasta " en "pasta" later samen opgeteld worden;</li><li>lege naam of hoeveelheid ≤ 0? Fout;</li><li>eenheid niet in <code>UNITS</code>? Fout;</li><li>pas als alles klopt worden de velden ingevuld.</li></ol>Zo kan er <b>nooit</b> een ongeldig ingrediënt bestaan.</div></div><div class="walk"><pre class="code"><code>public String getName() { return name; }
+public int getAmount() { return amount; }
+public String getUnit() { return unit; }
+
+@Override
+public String toString() { return amount + &quot; &quot; + unit + &quot; &quot; + name; }</code></pre><div class="why">Getters om te lezen, en <code>toString()</code> zodat een ingrediënt als tekst "100 g pasta" getoond kan worden.</div></div>
+<div class="tip"><b>Onthoud:</b> valideer in de constructor, dan hoeft de rest van de code nooit meer te controleren of een ingrediënt geldig is.</div></div><div class="card cls" id="lees-2"><div class="clshead"><span class="num">2</span><div><h3>Recipe</h3>
+<span class="pill">model</span></div></div>
+<p class="one"><b>In één zin:</b> een recept: id, titel, beschrijving, kcal per portie, ingrediënten en tags. Het kan na het bouwen niet meer veranderen.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> Bijna iedereen: de DB bewaart ze, het WeekPlan plant ze in, de View toont ze.</p>
+<div class="walk"><pre class="code"><code>private final String id;
+private final String title;
+private final String description;
+private final int calories;   // kcal per serving
+private final List&lt;Ingredient&gt; ingredients;
+private final List&lt;String&gt; tags;</code></pre><div class="why">Alle gegevens van een recept. Het <code>id</code> is een unieke code (UUID). Waarom? Twee recepten kunnen dezelfde titel hebben, en bij "bewerken" maken we een <b>nieuw</b> Recipe-object met hetzelfde id, zodat we weten welk oud recept vervangen moet worden.</div></div><div class="walk"><pre class="code"><code>Recipe(String id, String title, String description, int calories, List&lt;Ingredient&gt; ingredients, List&lt;String&gt; tags) {
+    this.id = id;
+    this.title = title;
+    this.description = description;
+    this.calories = calories;
+    this.ingredients = ingredients;
+    this.tags = tags;
+}</code></pre><div class="why">Let op: <b>geen</b> <code>public</code> voor de constructor. Daardoor kan alleen code uit hetzelfde package (<code>model</code>) een Recipe maken, en in de praktijk is dat enkel de <code>RecipeBuilder</code>. Iedereen moet dus via de Builder, die alles eerst controleert.</div></div><div class="walk"><pre class="code"><code>public boolean hasTag(String tag) { return tags.contains(tag.toLowerCase()); }
+
+@Override
+public String toString() { return title; }   // this is how ListView and ComboBox show the title</code></pre><div class="why"><code>hasTag</code> zoekt een tag op. <code>toString()</code> geeft de titel terug: daarom tonen de ListView en de keuzelijsten in het weekplan automatisch de titel.</div></div>
+<div class="tip"><b>Onthoud:</b> Recipe heeft enkel getters. "Bewerken" = een nieuw recept bouwen met hetzelfde id.</div></div><div class="card cls" id="lees-3"><div class="clshead"><span class="num">3</span><div><h3>RecipeBuilder</h3>
+<span class="pill">model · Builder</span></div></div>
+<p class="one"><b>In één zin:</b> bouwt een Recipe stap voor stap en controleert pas op het einde (in <code>build()</code>) of alles compleet is.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>PlannerController</code> (vanuit het formulier), <code>ViewApp</code> (demorecepten) en alle tests.</p>
+<div class="walk"><pre class="code"><code>private String id = UUID.randomUUID().toString();
+private String title = &quot;&quot;;
+private String description = &quot;&quot;;
+private int calories;
+private final List&lt;Ingredient&gt; ingredients = new ArrayList&lt;&gt;();
+private final List&lt;String&gt; tags = new ArrayList&lt;&gt;();</code></pre><div class="why">De "kladversie" van het recept. Velden hebben een startwaarde: een nieuw willekeurig id, lege titel, 0 kcal en lege lijsten. Deze velden zijn <b>niet</b> final, want de builder vult ze stap voor stap in.</div></div><div class="walk"><pre class="code"><code>public RecipeBuilder title(String title) { this.title = title.trim(); return this; }
+
+public RecipeBuilder description(String description) { this.description = description.trim(); return this; }</code></pre><div class="why">Elke stap-methode doet twee dingen: één veld invullen en <code>return this</code>. Dat laatste maakt het <b>aaneenrijgen</b> mogelijk:<br><code>new RecipeBuilder().title("Pasta").calories(550).ingredient(...).build()</code></div></div><div class="walk"><pre class="code"><code>public RecipeBuilder calories(int calories) {
+    if (calories &lt; 0) throw new IllegalArgumentException(&quot;Calories cannot be negative.&quot;);
+    this.calories = calories;
+    return this;
+}
+
+public RecipeBuilder ingredient(String name, int amount, String unit) {
+    ingredients.add(new Ingredient(name, amount, unit));</code></pre><div class="why"><code>calories</code> weigert negatieve getallen. <code>ingredient</code> maakt meteen een <code>Ingredient</code>: is dat ongeldig, dan krijg je de fout al op dit moment.</div></div><div class="walk"><pre class="code"><code>public RecipeBuilder tag(String tag) {
+    String t = tag.trim().toLowerCase();
+    if (!t.isEmpty() &amp;&amp; !tags.contains(t)) tags.add(t);</code></pre><div class="why">Tags worden klein geschreven; lege tags en dubbele tags worden stil overgeslagen.</div></div><div class="walk"><pre class="code"><code>public Recipe build() {
+    if (title.isEmpty()) throw new IllegalArgumentException(&quot;A recipe needs a title.&quot;);
+    if (ingredients.isEmpty()) throw new IllegalArgumentException(&quot;A recipe needs at least one ingredient.&quot;);
+    return new Recipe(id, title, description, calories, List.copyOf(ingredients), List.copyOf(tags));</code></pre><div class="why">Het eindpunt. Eerst de regels: een titel en minstens één ingrediënt. Dan pas wordt het echte Recipe gemaakt. <code>List.copyOf</code> maakt een kopie die niet meer aangepast kan worden, zodat niemand achteraf ingrediënten kan toevoegen aan een afgewerkt recept.</div></div>
+<div class="tip"><b>Onthoud:</b> stap-methodes geven <code>this</code> terug; <code>build()</code> controleert en maakt het eindproduct.</div></div><div class="card cls" id="lees-4"><div class="clshead"><span class="num">4</span><div><h3>PlanObserver + WeekPlan</h3>
+<span class="pill">model · Observer (subject)</span></div></div>
+<p class="one"><b>In één zin:</b> het weekrooster: 7 dagen × 4 momenten. Bij elke wijziging verwittigt het iedereen die zich heeft ingeschreven.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>MealPlannerDB</code> bezit er één. <code>GroceryList</code> luistert ernaar.</p>
+<div class="walk"><pre class="code"><code>public interface PlanObserver {
+    void onPlanChanged(WeekPlan plan);
+}</code></pre><div class="why">De <b>afspraak</b> (interface): wie meeluistert moet één methode hebben, <code>onPlanChanged</code>. Het WeekPlan weet daardoor niet <i>wie</i> er luistert, enkel dat die deze methode heeft.</div></div><div class="walk"><pre class="code"><code>public static final String[] DAYS = {&quot;Monday&quot;, &quot;Tuesday&quot;, &quot;Wednesday&quot;, &quot;Thursday&quot;, &quot;Friday&quot;, &quot;Saturday&quot;, &quot;Sunday&quot;};
+public static final String[] SLOTS = {&quot;Breakfast&quot;, &quot;Lunch&quot;, &quot;Dinner&quot;, &quot;Snack&quot;};
+
+private final Map&lt;String, Recipe&gt; meals = new HashMap&lt;&gt;();   // key e.g. &quot;Monday Dinner&quot;
+private final List&lt;PlanObserver&gt; observers = new ArrayList&lt;&gt;();</code></pre><div class="why"><code>DAYS</code> en <code>SLOTS</code> zijn gewone tekstlijsten (in plaats van enums). <code>meals</code> is een Map met als sleutel bv. <code>"Monday Dinner"</code> en als waarde het recept. Een leeg moment staat gewoon niet in de Map. <code>observers</code> is de lijst van luisteraars.</div></div><div class="walk"><pre class="code"><code>public Recipe get(String day, String slot) { return meals.get(day + &quot; &quot; + slot); }
+
+/** Puts a recipe on a meal. recipe == null means: remove the meal. */
+public void set(String day, String slot, Recipe recipe) {
+    if (recipe == null) meals.remove(day + &quot; &quot; + slot);
+    else meals.put(day + &quot; &quot; + slot, recipe);
+    notifyObservers();</code></pre><div class="why"><code>get</code> zoekt op met de sleutel "dag moment". <code>set</code> zet een recept (of verwijdert het bij <code>null</code>) en roept daarna <b>altijd</b> <code>notifyObservers()</code>. Dat is het hart van Observer: elke wijziging = iedereen verwittigen.</div></div><div class="walk"><pre class="code"><code>public List&lt;Recipe&gt; plannedRecipes() { return new ArrayList&lt;&gt;(meals.values()); }
+
+/** Total kcal of all meals planned on one day. */
+public int caloriesOn(String day) {
+    int total = 0;
+    for (String slot : SLOTS) {
+        Recipe r = get(day, slot);
+        if (r != null) total += r.getCalories();
+    }
+    return total;</code></pre><div class="why"><code>plannedRecipes</code> geeft alle ingeplande recepten. Pasta twee keer gepland? Dan staat het er twee keer in, en wordt het dus twee keer opgeteld. <code>caloriesOn(day)</code> loopt de 4 momenten van één dag af en telt de kcal op; dit is het getal onderaan in het weekplan.</div></div><div class="walk"><pre class="code"><code>public void replaceEverywhere(String id, Recipe replacement) {
+    for (String key : new ArrayList&lt;&gt;(meals.keySet())) {
+        if (!meals.get(key).getId().equals(id)) continue;
+        if (replacement == null) meals.remove(key);
+        else meals.put(key, replacement);
+    }
+    notifyObservers();</code></pre><div class="why">Na het bewerken of verwijderen van een recept: overal waar het oude id staat, de nieuwe versie zetten (of verwijderen bij <code>null</code>). We lopen over een <b>kopie</b> van de sleutels (<code>new ArrayList&lt;&gt;(...)</code>), omdat je een Map niet mag aanpassen terwijl je erover loopt.</div></div><div class="walk"><pre class="code"><code>public void addObserver(PlanObserver o) { observers.add(o); }
+
+public void removeObserver(PlanObserver o) { observers.remove(o); }
+
+private void notifyObservers() {
+    for (PlanObserver o : observers) o.onPlanChanged(this);</code></pre><div class="why">Inschrijven, uitschrijven en verwittigen. <code>notifyObservers</code> is <code>private</code>: alleen het WeekPlan zelf beslist wanneer er verwittigd wordt.</div></div>
+<div class="tip"><b>Onthoud:</b> subject = "ik verander en roep het rond". Het kent zijn luisteraars alleen via de interface.</div></div><div class="card cls" id="lees-5"><div class="clshead"><span class="num">5</span><div><h3>GroceryItem</h3>
+<span class="pill">model</span></div></div>
+<p class="one"><b>In één zin:</b> één regel op de boodschappenlijst: naam, hoeveelheid, eenheid, "extra?" en "gekocht?".</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>GroceryList</code> maakt en bewaart ze; de View toont ze als vinkjes.</p>
+<div class="walk"><pre class="code"><code>private final String name;
+private final int amount;
+private final String unit;      // &quot;g&quot;, &quot;ml&quot; or &quot;piece&quot;
+private final boolean manual;   // true = added by hand (extra)
+private boolean bought;</code></pre><div class="why">Vier vaste velden en één veld dat <b>wel</b> kan veranderen: <code>bought</code> (het vinkje). <code>manual</code> = door de gebruiker toegevoegd (extra).</div></div><div class="walk"><pre class="code"><code>public String key() { return name + &quot;|&quot; + unit; }
+
+/** 100 g pasta + 100 g pasta = 200 g pasta */
+public GroceryItem plus(GroceryItem other) { return new GroceryItem(name, amount + other.amount, unit, manual); }
+
+public void toggleBought() { bought = !bought; }</code></pre><div class="why"><code>key()</code> is de truc van het optellen: <code>"pasta|g"</code>. Twee regels met dezelfde sleutel worden één regel. Pasta in gram en pasta in stuks blijven dus apart. <code>plus</code> maakt een <b>nieuw</b> item met de som van beide hoeveelheden. <code>toggleBought</code> zet het vinkje aan/uit.</div></div>
+<div class="tip"><b>Onthoud:</b> dezelfde sleutel (naam|eenheid) = dezelfde regel op de lijst.</div></div><div class="card cls" id="lees-6"><div class="clshead"><span class="num">6</span><div><h3>GroceryList</h3>
+<span class="pill">model · Observer (observer)</span></div></div>
+<p class="one"><b>In één zin:</b> de boodschappenlijst. Ze luistert naar het WeekPlan en rekent zichzelf opnieuw uit bij elke wijziging.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> Ingeschreven bij het WeekPlan (door <code>MealPlannerDB.reset()</code>). Dit is de klasse die <b>volledig</b> getest wordt.</p>
+<div class="walk"><pre class="code"><code>public class GroceryList implements PlanObserver {
+    private final Map&lt;String, GroceryItem&gt; generated = new TreeMap&lt;&gt;(); // from the plan, alphabetical
+    private final List&lt;GroceryItem&gt; extras = new ArrayList&lt;&gt;();         // added by hand</code></pre><div class="why">Twee bakjes: <code>generated</code> (uitgerekend uit het plan; een <code>TreeMap</code> houdt de sleutels alfabetisch) en <code>extras</code> (met de hand toegevoegd, blijven altijd staan).</div></div><div class="walk"><pre class="code"><code>public void onPlanChanged(WeekPlan plan) {
+    Map&lt;String, GroceryItem&gt; fresh = new TreeMap&lt;&gt;();
+    for (Recipe recipe : plan.plannedRecipes()) {
+        for (Ingredient i : recipe.getIngredients()) {
+            GroceryItem item = new GroceryItem(i.getName(), i.getAmount(), i.getUnit(), false);
+            fresh.merge(item.key(), item, GroceryItem::plus);   // same key? -&gt; add up</code></pre><div class="why">Dit wordt opgeroepen door het WeekPlan. We beginnen met een lege Map <code>fresh</code> en lopen over elk ingepland recept en elk ingrediënt daarin. <code>merge(sleutel, item, GroceryItem::plus)</code> betekent: <i>staat de sleutel er nog niet? zet het item erin. Staat hij er al? tel ze op met <code>plus</code>.</i> Zo wordt 100 g + 100 g pasta automatisch 200 g.</div></div><div class="walk"><pre class="code"><code>// keep the &quot;bought&quot; ticks for items that are still on the list
+for (GroceryItem item : fresh.values()) {
+    GroceryItem old = generated.get(item.key());
+    if (old != null &amp;&amp; old.isBought()) item.toggleBought();
+}
+generated.clear();
+generated.putAll(fresh);</code></pre><div class="why">Probleem: we bouwen de lijst telkens opnieuw, dus de vinkjes zouden verdwijnen. Oplossing: voor elk nieuw item kijken of het oude item met dezelfde sleutel aangevinkt was, en zo ja het vinkje overnemen. Daarna de oude lijst vervangen door de nieuwe.</div></div><div class="walk"><pre class="code"><code>public void addExtra(String name, int amount, String unit) {
+    if (name.isBlank() || amount &lt;= 0) throw new IllegalArgumentException(&quot;Enter a name and an amount &gt; 0.&quot;);
+    extras.add(new GroceryItem(name.trim().toLowerCase(), amount, unit, true));
+}
+
+/** First the calculated items, then the extras. */
+public List&lt;GroceryItem&gt; items() {
+    List&lt;GroceryItem&gt; all = new ArrayList&lt;&gt;(generated.values());
+    all.addAll(extras);
+    return all;</code></pre><div class="why"><code>addExtra</code> controleert de invoer en voegt een extra item toe (<code>manual = true</code>). <code>items()</code> geeft eerst de uitgerekende items en dan de extra's, in één nieuwe lijst.</div></div><div class="walk"><pre class="code"><code>public int amountOf(String name, String unit) {
+    GroceryItem item = generated.get(name + &quot;|&quot; + unit);
+    return item == null ? 0 : item.getAmount();</code></pre><div class="why">Hulpje (vooral voor de tests): hoeveel staat er van iets op de lijst? Niets gevonden = 0.</div></div>
+<div class="tip"><b>Onthoud:</b> telkens alles opnieuw uitrekenen is eenvoudiger (en foutlozer) dan bijhouden wat er precies veranderd is.</div></div><div class="card cls" id="lees-7"><div class="clshead"><span class="num">7</span><div><h3>MealPlannerDB</h3>
+<span class="pill">model · Singleton + MVC-model</span></div></div>
+<p class="one"><b>In één zin:</b> de enige centrale plek met alle data (recepten, weekplan, boodschappenlijst). Er bestaat er precies één van, en ze roept de View bij elke wijziging.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>ViewApp</code> haalt hem op met <code>getInstance()</code>; de Controller en de Commands roepen zijn methodes; de View luistert ernaar.</p>
+<div class="walk"><pre class="code"><code>private static volatile MealPlannerDB instance;   // volatile: every thread sees the new value immediately
+
+private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+private final List&lt;Recipe&gt; recipes = new ArrayList&lt;&gt;();
+private WeekPlan plan;
+private GroceryList groceries;
+
+private MealPlannerDB() { reset(); }               // private: nobody else can call &quot;new&quot;</code></pre><div class="why"><b>Singleton, deel 1.</b> <code>instance</code> is <code>static</code>: er is maar één vakje voor de hele app. <code>volatile</code> zorgt dat elke thread meteen ziet dat het ingevuld is. De constructor is <code>private</code>: niemand buiten deze klasse kan <code>new MealPlannerDB()</code> schrijven.</div></div><div class="walk"><pre class="code"><code>public static MealPlannerDB getInstance() {
+    if (instance == null) {                         // 1st check: fast, without a lock
+        synchronized (MealPlannerDB.class) {        // lock: only one thread at a time
+            if (instance == null) {                 // 2nd check: maybe another thread was faster
+                instance = new MealPlannerDB();
+            }
+        }
+    }
+    return instance;</code></pre><div class="why"><b>Singleton, deel 2: double-checked locking.</b> Lees het als een deur met een slot:<ol><li>Eerste check zonder slot: bestaat hij al? Dan meteen teruggeven (snel, dit is bijna altijd zo).</li><li>Nog niet? Neem het slot (<code>synchronized</code>), zodat maar één thread tegelijk verder mag.</li><li>Tweede check: misschien was een andere thread net sneller. Pas als hij nog steeds <code>null</code> is, maken we hem.</li></ol></div></div><div class="walk"><pre class="code"><code>public void reset() {
+    recipes.clear();
+    plan = new WeekPlan();
+    groceries = new GroceryList();
+    plan.addObserver(groceries);                    // OBSERVER: the list follows the plan
+    pcs.firePropertyChange(&quot;reset&quot;, null, null);</code></pre><div class="why">Begint opnieuw: lege recepten, een nieuw plan, een nieuwe lijst. Hier wordt de <b>Observer gekoppeld</b>: <code>plan.addObserver(groceries)</code>. De tests roepen <code>reset()</code> op, omdat de singleton tussen tests blijft bestaan.</div></div><div class="walk"><pre class="code"><code>public void addRecipe(Recipe r) {
+    recipes.add(r);
+    pcs.firePropertyChange(&quot;recipes&quot;, null, r);
+}
+
+public void updateRecipe(Recipe updated) {
+    recipes.replaceAll(r -&gt; r.getId().equals(updated.getId()) ? updated : r);
+    plan.replaceEverywhere(updated.getId(), updated);  // use the new version in the plan too
+    pcs.firePropertyChange(&quot;recipes&quot;, null, updated);
+}
+
+public void removeRecipe(Recipe r) {
+    recipes.removeIf(x -&gt; x.getId().equals(r.getId()));
+    plan.replaceEverywhere(r.getId(), null);           // remove from the plan -&gt; list shrinks too
+    pcs.firePropertyChange(&quot;recipes&quot;, r, null);</code></pre><div class="why">Recepten toevoegen, vervangen en verwijderen. Telkens wordt ook het plan bijgewerkt (via <code>replaceEverywhere</code>) en eindigt het met <code>firePropertyChange</code>: dat is het <b>MVC-seintje</b> naar de View, "er is iets veranderd, teken opnieuw".</div></div><div class="walk"><pre class="code"><code>public void setMeal(String day, String slot, Recipe recipe) {
+    plan.set(day, slot, recipe);                    // -&gt; WeekPlan notifies GroceryList
+    pcs.firePropertyChange(&quot;plan&quot;, null, recipe);   // -&gt; MVC: the View redraws
+}
+
+public int caloriesOn(String day) { return plan.caloriesOn(day); }</code></pre><div class="why">Hier zie je de <b>twee observers</b> na elkaar: <code>plan.set(...)</code> verwittigt de GroceryList (Observer binnen het model), daarna verwittigt <code>firePropertyChange</code> de View (MVC).</div></div><div class="walk"><pre class="code"><code>public void toggleBought(GroceryItem item) {
+    item.toggleBought();
+    pcs.firePropertyChange(&quot;groceries&quot;, null, item);
+}
+
+public void addExtra(String name, int amount, String unit) {
+    groceries.addExtra(name, amount, unit);
+    pcs.firePropertyChange(&quot;groceries&quot;, null, name);
+}
+
+// ---------- MVC: the View subscribes here ----------
+public void addPropertyChangeListener(PropertyChangeListener l) { pcs.addPropertyChangeListener(l); }
+
+public void removePropertyChangeListener(PropertyChangeListener l) { pcs.removePropertyChangeListener(l); }</code></pre><div class="why">Boodschappen afvinken en extra's toevoegen, opnieuw met een seintje naar de View. Onderaan: de View schrijft zich hier in als luisteraar (net zoals in lab 5).</div></div>
+<div class="tip"><b>Onthoud:</b> de DB doet het echte werk en eindigt elke wijziging met <code>firePropertyChange</code>.</div></div><div class="card cls" id="lees-8"><div class="clshead"><span class="num">8</span><div><h3>Command, SetMealCommand, CommandHistory</h3>
+<span class="pill">command · Command</span></div></div>
+<p class="one"><b>In één zin:</b> elke wijziging aan het weekplan wordt een klein object dat zichzelf kan uitvoeren én terugdraaien. De history bewaart die objecten voor undo/redo.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>PlannerController</code> maakt de commands en geeft ze aan de <code>CommandHistory</code>.</p>
+<div class="walk"><pre class="code"><code>public interface Command {
+    void execute();
+
+    void undo();
+}</code></pre><div class="why">De afspraak: elk command kan <code>execute()</code> (doen) en <code>undo()</code> (ongedaan maken).</div></div><div class="walk"><pre class="code"><code>private final MealPlannerDB db;   // the &quot;receiver&quot;: it does the real work
+private final String day;    // e.g. &quot;Monday&quot;
+private final String slot;   // e.g. &quot;Dinner&quot;
+private final Recipe recipe;
+private Recipe previous;          // what was there before, needed for undo</code></pre><div class="why">Alles wat het command moet weten: <b>waar</b> (dag + moment), <b>wat</b> (het nieuwe recept, of <code>null</code> om te wissen) en de <b>receiver</b> (de DB, die het echte werk doet). <code>previous</code> is nog leeg: dat wordt pas ingevuld bij het uitvoeren.</div></div><div class="walk"><pre class="code"><code>public void execute() {
+    previous = db.getMeal(day, slot);
+    db.setMeal(day, slot, recipe);
+}
+
+@Override
+public void undo() { db.setMeal(day, slot, previous); }</code></pre><div class="why"><code>execute</code>: eerst onthouden wat er stond, dan het nieuwe recept zetten. <code>undo</code>: gewoon het vorige terugzetten. Omdat "wissen" = "zet op <code>null</code>", is één command genoeg voor plannen, wijzigen én wissen.</div></div><div class="walk"><pre class="code"><code>private final Deque&lt;Command&gt; undoStack = new ArrayDeque&lt;&gt;();
+private final Deque&lt;Command&gt; redoStack = new ArrayDeque&lt;&gt;();
+
+public void run(Command c) {
+    c.execute();
+    undoStack.push(c);
+    redoStack.clear();            // new action -&gt; the old &quot;redo&quot; no longer makes sense</code></pre><div class="why">Twee <b>stapels</b> (denk aan een stapel borden: je neemt altijd het bovenste). <code>run</code> voert uit, legt het command op de undo-stapel en maakt de redo-stapel leeg: na een nieuwe actie heeft "opnieuw" geen zin meer.</div></div><div class="walk"><pre class="code"><code>public void undo() {
+    if (undoStack.isEmpty()) return;
+    Command c = undoStack.pop();
+    c.undo();
+    redoStack.push(c);
+}
+
+public void redo() {
+    if (redoStack.isEmpty()) return;
+    Command c = redoStack.pop();
+    c.execute();
+    undoStack.push(c);
+}
+
+public boolean canUndo() { return !undoStack.isEmpty(); }</code></pre><div class="why"><code>undo</code>: bovenste van de undo-stapel nemen, terugdraaien, op de redo-stapel leggen. <code>redo</code> is precies het omgekeerde. Lege stapel? Dan doet het gewoon niets.</div></div>
+<div class="tip"><b>Onthoud:</b> Command maakt van een actie een object; twee stapels geven je undo en redo.</div></div><div class="card cls" id="lees-9"><div class="clshead"><span class="num">9</span><div><h3>PlannerController</h3>
+<span class="pill">controller · MVC</span></div></div>
+<p class="one"><b>In één zin:</b> de ober tussen scherm en model: krijgt tekst uit het scherm, zet die om naar echte gegevens en geeft opdrachten aan het model.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>MainView</code> roept zijn methodes bij elke klik.</p>
+<div class="walk"><pre class="code"><code>private final MealPlannerDB db;
+private final CommandHistory history;
+
+public PlannerController(MealPlannerDB db, CommandHistory history) {
+    this.db = db;
+    this.history = history;
+}</code></pre><div class="why">De controller krijgt de DB en de CommandHistory via de constructor (zoals in lab 5), hij maakt ze niet zelf. Dat maakt testen makkelijk.</div></div><div class="walk"><pre class="code"><code>public void addRecipe(String title, String description, String calories, String[][] ingredients, String tags) {
+    db.addRecipe(build(new RecipeBuilder(), title, description, calories, ingredients, tags));
+}
+
+public void editRecipe(Recipe old, String title, String description, String calories, String[][] ingredients, String tags) {
+    db.updateRecipe(build(new RecipeBuilder().id(old.getId()), title, description, calories, ingredients, tags));
+    history.clear();   // old undo steps know the old recipe, so clear them</code></pre><div class="why">Recept toevoegen of bewerken: beide gebruiken de hulpmethode <code>build</code>. Bij bewerken geven we het oude id mee aan de builder, zodat het nieuwe recept het oude vervangt. Daarna wordt de undo-geschiedenis gewist, want oude commands verwijzen nog naar het oude recept.</div></div><div class="walk"><pre class="code"><code>public void assignMeal(String day, String slot, Recipe recipe) {
+    history.run(new SetMealCommand(db, day, slot, recipe));
+}
+
+public void clearMeal(String day, String slot) { assignMeal(day, slot, null); }
+
+public void undo() { history.undo(); }
+
+public void redo() { history.redo(); }</code></pre><div class="why">Plannen gaat <b>altijd via een command</b>: <code>history.run(new SetMealCommand(...))</code>. Wissen is gewoon plannen met <code>null</code>. Undo/redo worden doorgegeven aan de history.</div></div><div class="walk"><pre class="code"><code>private Recipe build(RecipeBuilder b, String title, String description, String calories, String[][] ingredients, String tags) {
+    b.title(title).description(description).calories(calories.isBlank() ? 0 : toInt(calories, &quot;Calories&quot;));
+    for (String[] row : ingredients) {
+        if (row[2].isBlank()) continue;                       // row without ingredient name
+        b.ingredient(row[2], toInt(row[0], &quot;The amount of &quot; + row[2]), row[1]);
+    }
+    for (String tag : tags.split(&quot;,&quot;)) b.tag(tag);
+    return b.build();</code></pre><div class="why">Formulier → Recipe. De kcal zijn optioneel (leeg = 0). Dan elke ingrediëntenrij: <code>row[0]</code> = hoeveelheid, <code>row[1]</code> = eenheid, <code>row[2]</code> = naam. Een rij zonder naam wordt overgeslagen (lege extra rij). De tags komen uit één tekstvak, gesplitst op komma's.</div></div><div class="walk"><pre class="code"><code>private int toInt(String text, String what) {
+    try {
+        return Integer.parseInt(text.trim());
+    } catch (NumberFormatException e) {
+        throw new IllegalArgumentException(what + &quot; must be a whole number.&quot;);</code></pre><div class="why">Zet tekst om naar een geheel getal. Typt de gebruiker "abc" of "1.5", dan geeft Java een <code>NumberFormatException</code>; wij vangen die op (<code>catch</code>) en gooien een duidelijke foutmelding, bv. "The amount of pasta must be a whole number."</div></div>
+<div class="tip"><b>Onthoud:</b> de controller rekent niets uit en tekent niets: hij vertaalt klikken en tekst naar opdrachten.</div></div><div class="card cls" id="lees-10"><div class="clshead"><span class="num">10</span><div><h3>IngredientRow</h3>
+<span class="pill">view</span></div></div>
+<p class="one"><b>In één zin:</b> één rij in het receptformulier: [hoeveelheid] [eenheid ▼] [ingrediënt] [✕].</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> <code>MainView</code> maakt er één per ingrediënt.</p>
+<div class="walk"><pre class="code"><code>public class IngredientRow extends HBox {
+    private final TextField amount = new TextField();
+    private final ComboBox&lt;String&gt; unit = new ComboBox&lt;&gt;();
+    private final TextField name = new TextField();</code></pre><div class="why">Een <code>HBox</code> is een JavaFX-vak dat zijn onderdelen naast elkaar zet. Deze rij <b>is</b> zo'n vak (<code>extends HBox</code>) met drie invoervelden.</div></div><div class="walk"><pre class="code"><code>public IngredientRow(Ingredient ingredient, Runnable onRemove) {
+    super(6);
+    amount.setPromptText(&quot;amount&quot;);
+    amount.setPrefWidth(80);
+    unit.getItems().setAll(Ingredient.UNITS);
+    unit.setValue(&quot;g&quot;);
+    unit.setPrefWidth(90);
+    name.setPromptText(&quot;ingredient, e.g. pasta&quot;);
+    HBox.setHgrow(name, Priority.ALWAYS);
+    if (ingredient != null) {                      // editing: show the existing values
+        amount.setText(String.valueOf(ingredient.getAmount()));
+        unit.setValue(ingredient.getUnit());
+        name.setText(ingredient.getName());
+    }
+    Button remove = new Button(&quot;✕&quot;);
+    remove.setOnAction(e -&gt; onRemove.run());
+    getChildren().addAll(amount, unit, name, remove);</code></pre><div class="why">De constructor stelt alles in: placeholder-tekst, de dropdown gevuld met <code>Ingredient.UNITS</code> (standaard "g"), en het naamveld mag meegroeien in de breedte. Krijgt hij een bestaand ingrediënt mee (bij bewerken), dan vult hij de velden in. De ✕-knop roept <code>onRemove</code>: de MainView beslist zelf wat "verwijderen" betekent.</div></div><div class="walk"><pre class="code"><code>public String[] values() { return new String[]{amount.getText(), unit.getValue(), name.getText()}; }</code></pre><div class="why">Geeft de drie ingevulde waarden terug als <code>{hoeveelheid, eenheid, naam}</code>. De controller hoeft zo niets van JavaFX te weten.</div></div>
+<div class="tip"><b>Onthoud:</b> een eigen klasse voor één rij houdt de MainView kort.</div></div><div class="card cls" id="lees-11"><div class="clshead"><span class="num">11</span><div><h3>MainView</h3>
+<span class="pill">view · MVC</span></div></div>
+<p class="one"><b>In één zin:</b> het hele scherm: drie tabbladen. Tekent alles, stuurt klikken naar de controller en tekent opnieuw wanneer het model "veranderd!" roept.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> Gemaakt door <code>ViewApp</code>.</p>
+<div class="walk"><pre class="code"><code>public class MainView extends TabPane implements PropertyChangeListener {
+    private final MealPlannerDB model;
+    private final PlannerController controller;
+
+    // tab 1: recipes
+    private final ListView&lt;Recipe&gt; recipeList = new ListView&lt;&gt;();
+    private final TextField title = new TextField();
+    private final TextArea description = new TextArea();
+    private final TextField calories = new TextField();
+    private final VBox ingredientRows = new VBox(6);     // one IngredientRow per ingredient
+    private final TextField tags = new TextField();
+    // tab 2: week plan (7 days x 4 meals) + kcal per day
+    private final ComboBox&lt;Recipe&gt;[][] cells = new ComboBox[7][4];
+    private final Label[] dayTotals = new Label[7];
+    private boolean refreshing;   // true while WE fill the combo boxes -&gt; do not send commands
+    // tab 3: groceries
+    private final VBox groceryBox = new VBox(6);</code></pre><div class="why">De View <b>is</b> een <code>TabPane</code> (vak met tabbladen) en <b>luistert</b> naar het model (<code>implements PropertyChangeListener</code>). Daaronder alle schermonderdelen als velden, per tab gegroepeerd. <code>cells[7][4]</code> = de 28 keuzelijsten van het weekplan; <code>dayTotals</code> = de 7 kcal-labels.</div></div><div class="walk"><pre class="code"><code>public MainView(MealPlannerDB model, PlannerController controller) {
+    this.model = model;
+    this.controller = controller;
+    getTabs().addAll(recipesTab(), planTab(), groceryTab());
+    setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
+    model.addPropertyChangeListener(this);   // MVC observer: notify me on every change
+    refresh();
+}
+
+@Override
+public void propertyChange(PropertyChangeEvent evt) { refresh(); }</code></pre><div class="why">Constructor: de drie tabs bouwen, inschrijven bij het model en één keer alles tekenen. <code>propertyChange</code> is wat het model oproept bij elke wijziging: we tekenen gewoon <b>alles</b> opnieuw (simpel en altijd juist).</div></div><div class="walk"><pre class="code"><code>private Tab recipesTab() {
+    title.setPromptText(&quot;Title&quot;);
+    description.setPromptText(&quot;Description&quot;);
+    description.setPrefRowCount(2);
+    calories.setPromptText(&quot;kcal per serving, e.g. 550&quot;);
+    tags.setPromptText(&quot;Tags, separated by commas (vegetarian, quick)&quot;);
+    fillForm(null);
+
+    recipeList.getSelectionModel().selectedItemProperty().addListener((obs, old, r) -&gt; fillForm(r));
+
+    Button addRow = new Button(&quot;+ Ingredient&quot;);
+    addRow.setOnAction(e -&gt; addIngredientRow(null));
+    Button add = new Button(&quot;Add&quot;);
+    Button save = new Button(&quot;Save changes&quot;);
+    Button remove = new Button(&quot;Remove&quot;);
+    Button clear = new Button(&quot;Clear form&quot;);
+    add.getStyleClass().add(&quot;primary&quot;);
+    add.setOnAction(e -&gt; safe(() -&gt; controller.addRecipe(title.getText(), description.getText(), calories.getText(), rows(), tags.getText())));
+    save.setOnAction(e -&gt; withSelected(r -&gt; controller.editRecipe(r, title.getText(), description.getText(), calories.getText(), rows(), tags.getText())));
+    remove.setOnAction(e -&gt; withSelected(controller::removeRecipe));
+    clear.setOnAction(e -&gt; { recipeList.getSelectionModel().clearSelection(); fillForm(null); });
+
+    VBox form = new VBox(8, header(&quot;Recipe&quot;), title, description, header(&quot;Calories (kcal per serving)&quot;), calories,
+            header(&quot;Ingredients&quot;), ingredientRows, addRow,
+            header(&quot;Tags&quot;), tags, new HBox(8, add, save, remove, clear));
+    form.getStyleClass().add(&quot;card&quot;);
+    HBox root = new HBox(12, recipeList, form);
+    HBox.setHgrow(form, Priority.ALWAYS);
+    root.setPadding(new Insets(12));
+    return new Tab(&quot;Recipes&quot;, root);</code></pre><div class="why"><b>Tab 1, recepten.</b> Leesvolgorde: (1) placeholders instellen, (2) als je een recept aanklikt in de lijst → <code>fillForm</code>, (3) knoppen maken, (4) bij elke knop zeggen wat er moet gebeuren (een lambda die de controller oproept), (5) alles in een <code>VBox</code> (onder elkaar) zetten, naast de lijst in een <code>HBox</code>. Alle controller-oproepen zitten in <code>safe(...)</code>, zodat foute invoer een pop-up geeft in plaats van een crash.</div></div><div class="walk"><pre class="code"><code>private void fillForm(Recipe r) {
+    title.setText(r == null ? &quot;&quot; : r.getTitle());
+    description.setText(r == null ? &quot;&quot; : r.getDescription());
+    calories.setText(r == null ? &quot;&quot; : String.valueOf(r.getCalories()));
+    tags.setText(r == null ? &quot;&quot; : String.join(&quot;, &quot;, r.getTags()));
+    ingredientRows.getChildren().clear();
+    if (r == null) addIngredientRow(null);                      // new recipe: one empty row
+    else for (Ingredient i : r.getIngredients()) addIngredientRow(i);
+}
+
+private void addIngredientRow(Ingredient ingredient) {
+    IngredientRow[] row = new IngredientRow[1];   // array trick: the lambda may refer to its own row
+    row[0] = new IngredientRow(ingredient, () -&gt; ingredientRows.getChildren().remove(row[0]));
+    ingredientRows.getChildren().add(row[0]);
+}
+
+/** All ingredient rows as {amount, unit, name}. */
+private String[][] rows() {
+    return ingredientRows.getChildren().stream().map(n -&gt; ((IngredientRow) n).values()).toArray(String[][]::new);</code></pre><div class="why"><code>fillForm</code> zet een recept in het formulier (of maakt het leeg bij <code>null</code>), met één <code>IngredientRow</code> per ingrediënt. <code>addIngredientRow</code> maakt een rij; het "array-trucje" is nodig omdat de lambda van de ✕-knop naar zijn eigen rij moet verwijzen. <code>rows()</code> verzamelt de waarden van alle rijen in een <code>String[][]</code> voor de controller.</div></div><div class="walk"><pre class="code"><code>private Tab planTab() {
+    GridPane grid = new GridPane();
+    grid.setHgap(6);
+    grid.setVgap(6);
+    for (int d = 0; d &lt; 7; d++) {
+        String day = WeekPlan.DAYS[d];
+        grid.add(header(day), d + 1, 0);
+        for (int s = 0; s &lt; 4; s++) {
+            String slot = WeekPlan.SLOTS[s];
+            if (d == 0) grid.add(header(slot), 0, s + 1);
+            ComboBox&lt;Recipe&gt; combo = new ComboBox&lt;&gt;();
+            combo.setPrefWidth(120);
+            combo.setOnAction(e -&gt; {
+                if (!refreshing &amp;&amp; combo.getValue() != model.getMeal(day, slot))
+                    controller.assignMeal(day, slot, combo.getValue());
+            });
+            Button x = new Button(&quot;✕&quot;);
+            x.setOnAction(e -&gt; controller.clearMeal(day, slot));
+            cells[d][s] = combo;
+            grid.add(new HBox(2, combo, x), d + 1, s + 1);
+        }
+        dayTotals[d] = new Label();
+        dayTotals[d].getStyleClass().add(&quot;kcal&quot;);
+        grid.add(dayTotals[d], d + 1, 5);
+    }
+    grid.add(header(&quot;Total&quot;), 0, 5);</code></pre><div class="why"><b>Tab 2, weekplan.</b> Een <code>GridPane</code> is een rooster (kolom, rij). Twee lussen: 7 dagen × 4 momenten. Per vakje een keuzelijst + ✕-knop. Kies je een recept, dan gaat dat naar <code>controller.assignMeal</code>, <b>behalve</b> als <code>refreshing</code> waar is: dan zijn wij zelf de lijsten aan het vullen en mag er geen command gemaakt worden. Rij 5 bevat per dag een kcal-label.</div></div><div class="walk"><pre class="code"><code>private Tab groceryTab() {
+    TextField amount = new TextField();
+    ComboBox&lt;String&gt; unit = new ComboBox&lt;&gt;();
+    TextField name = new TextField();
+    amount.setPromptText(&quot;amount&quot;);
+    unit.getItems().setAll(Ingredient.UNITS);
+    unit.setValue(&quot;piece&quot;);
+    name.setPromptText(&quot;name, e.g. dish soap&quot;);
+    Button add = new Button(&quot;Add extra&quot;);
+    add.getStyleClass().add(&quot;primary&quot;);
+    add.setOnAction(e -&gt; safe(() -&gt; {
+        controller.addExtra(name.getText(), amount.getText(), unit.getValue());
+        name.clear();
+        amount.clear();
+    }));
+    groceryBox.getStyleClass().add(&quot;card&quot;);
+    ScrollPane scroll = new ScrollPane(groceryBox);
+    scroll.setFitToWidth(true);
+    VBox.setVgrow(scroll, Priority.ALWAYS);
+    VBox root = new VBox(12, header(&quot;Calculated automatically from your week plan&quot;), scroll,
+            new HBox(8, amount, unit, name, add));
+    root.setPadding(new Insets(12));
+    return new Tab(&quot;Groceries&quot;, root);</code></pre><div class="why"><b>Tab 3, boodschappen.</b> Bovenaan de lijst met vinkjes (wordt gevuld in <code>refresh</code>), onderaan de velden voor een extra item, met dezelfde eenheid-dropdown.</div></div><div class="walk"><pre class="code"><code>private void refresh() {
+    refreshing = true;
+    recipeList.getItems().setAll(model.getRecipes());
+    for (int d = 0; d &lt; 7; d++) {
+        for (int s = 0; s &lt; 4; s++) {
+            cells[d][s].getItems().setAll(model.getRecipes());
+            cells[d][s].setValue(model.getMeal(WeekPlan.DAYS[d], WeekPlan.SLOTS[s]));
+        }
+        dayTotals[d].setText(model.caloriesOn(WeekPlan.DAYS[d]) + &quot; kcal&quot;);
+    }
+    groceryBox.getChildren().clear();
+    for (GroceryItem item : model.getGroceries()) {
+        CheckBox box = new CheckBox(item.toString());
+        box.setSelected(item.isBought());
+        box.setOnAction(e -&gt; controller.toggleBought(item));
+        groceryBox.getChildren().add(box);
+    }
+    refreshing = false;</code></pre><div class="why"><b>Alles opnieuw tekenen</b> vanuit het model: receptenlijst, de 28 keuzelijsten, de kcal per dag en de vinkjes. <code>refreshing = true</code> aan het begin en <code>false</code> aan het einde beschermt tegen de "valse klikken" uit tab 2.</div></div><div class="walk"><pre class="code"><code>private void safe(Runnable action) {
+    try {
+        action.run();
+    } catch (IllegalArgumentException ex) {
+        showError(ex.getMessage());
+    }
+}
+
+private void showError(String message) { new Alert(Alert.AlertType.ERROR, message).showAndWait(); }</code></pre><div class="why">Vangt elke <code>IllegalArgumentException</code> op (van de Builder, Ingredient of controller) en toont de boodschap in een foutvenster.</div></div>
+<div class="tip"><b>Onthoud:</b> de View rekent niets uit. Ze tekent wat het model zegt en geeft klikken door.</div></div><div class="card cls" id="lees-12"><div class="clshead"><span class="num">12</span><div><h3>ViewApp, Launcher en style.css</h3>
+<span class="pill">start</span></div></div>
+<p class="one"><b>In één zin:</b> het opstarten: Model, View en Controller maken en aan elkaar koppelen.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> Jij, als je op de groene pijl naast <code>Launcher.main</code> klikt.</p>
+<div class="walk"><pre class="code"><code>public class Launcher {
+    public static void main(String[] args) { ViewApp.main(args); }</code></pre><div class="why">Een "lege" startklasse. Ze bestaat enkel om de foutmelding "JavaFX runtime components are missing" te vermijden: start altijd via deze klasse.</div></div><div class="walk"><pre class="code"><code>public void start(Stage stage) {
+    MealPlannerDB model = MealPlannerDB.getInstance();                               // M
+    PlannerController controller = new PlannerController(model, new CommandHistory()); // C
+    addDemoRecipes(model);
+    MainView view = new MainView(model, controller);                                  // V
+
+    stage.setTitle(&quot;Smart Meal Planner&quot;);
+    Scene scene = new Scene(view, 1300, 600);
+    scene.getStylesheets().add(getClass().getResource(&quot;style.css&quot;).toExternalForm());   // the looks
+    stage.setScene(scene);
+    stage.show();</code></pre><div class="why">Lees dit als de <b>bouwtekening van MVC</b>: M = de singleton ophalen, C = controller maken met M en een lege history, demorecepten toevoegen, V = de View maken met M en C. Daarna een venster (<code>Scene</code>) maken, de CSS laden en tonen.</div></div><div class="walk"><pre class="code"><code>private static void addDemoRecipes(MealPlannerDB db) {
+    db.addRecipe(new RecipeBuilder().title(&quot;Pasta pomodoro&quot;).description(&quot;Weeknight classic&quot;).calories(550)
+            .ingredient(&quot;pasta&quot;, 100, &quot;g&quot;).ingredient(&quot;passata&quot;, 200, &quot;ml&quot;).ingredient(&quot;onion&quot;, 1, &quot;piece&quot;)
+            .tag(&quot;vegetarian&quot;).tag(&quot;quick&quot;).build());</code></pre><div class="why">Drie voorbeeldrecepten, rechtstreeks gebouwd met de Builder, zodat je meteen iets ziet.</div></div><div class="walk"><pre class="code"><code>.root        { -fx-font-family: &quot;Segoe UI&quot;, sans-serif; -fx-font-size: 13px; -fx-background-color: #f4f6f8; }
+.card        { -fx-background-color: white; -fx-background-radius: 10; -fx-padding: 14;
+               -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2); }
+.header      { -fx-font-weight: bold; -fx-text-fill: #2e7d32; }
+.kcal        { -fx-font-weight: bold; -fx-text-fill: #e65100; }
+.button      { -fx-background-radius: 6; -fx-cursor: hand; }
+.primary     { -fx-background-color: #2e7d32; -fx-text-fill: white; }</code></pre><div class="why">De looks staan apart in een CSS-bestand (zoals bij een website, maar elke eigenschap begint met <code>-fx-</code>). Met <code>getStyleClass().add("card")</code> in Java koppel je een stijl aan een onderdeel. Je hoeft dit niet te kennen voor de patronen.</div></div>
+<div class="tip"><b>Onthoud:</b> ViewApp is de enige plek waar M, V en C elkaar leren kennen.</div></div><div class="card cls" id="lees-13"><div class="clshead"><span class="num">13</span><div><h3>De tests</h3>
+<span class="pill">test</span></div></div>
+<p class="one"><b>In één zin:</b> bewijzen dat alles werkt. Elke test volgt hetzelfde ritme: <b>klaarzetten → doen → controleren</b>.</p>
+<p class="small"><b>Wie gebruikt deze klasse?</b> Maven (<code>mvnw.cmd -pl project test</code>) of de groene pijlen in IntelliJ.</p>
+<div class="walk"><pre class="code"><code>void setUp() {
+    plan = new WeekPlan();
+    list = new GroceryList();
+    plan.addObserver(list);
+    pasta = new RecipeBuilder().title(&quot;Pasta&quot;).ingredient(&quot;pasta&quot;, 100, &quot;g&quot;).ingredient(&quot;onion&quot;, 1, &quot;piece&quot;).build();
+}</code></pre><div class="why"><code>@BeforeEach</code> draait vóór <b>elke</b> test: een vers plan en een verse lijst, gekoppeld als observer, en een pasta-recept. Zo beïnvloeden tests elkaar nooit.</div></div><div class="walk"><pre class="code"><code>void sameRecipeTwiceIsSummed() {
+    plan.set(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+    plan.set(&quot;Thursday&quot;, &quot;Dinner&quot;, pasta);
+    assertEquals(200, list.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+    assertEquals(2, list.amountOf(&quot;onion&quot;, &quot;piece&quot;));
+}</code></pre><div class="why">Een typische test. Doen: twee keer pasta plannen. Controleren: <code>assertEquals(verwacht, echt)</code>. Er is een test voor elk stukje van GroceryList (optellen, eenheden apart, krimpen, vinkjes, extra's, foute invoer), daarom heet ze "volledig getest".</div></div><div class="walk"><pre class="code"><code>void planTwiceSumsAndUndoRedoUpdatesTheList() {
+    controller.addRecipe(&quot;Pasta&quot;, &quot;&quot;, &quot;550&quot;, new String[][]{{&quot;100&quot;, &quot;g&quot;, &quot;pasta&quot;}, {&quot;1&quot;, &quot;piece&quot;, &quot;onion&quot;}}, &quot;quick&quot;);
+    Recipe pasta = db.getRecipes().get(0);
+
+    controller.assignMeal(&quot;Monday&quot;, &quot;Dinner&quot;, pasta);
+    controller.assignMeal(&quot;Thursday&quot;, &quot;Dinner&quot;, pasta);
+    assertEquals(200, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+    assertEquals(550, db.caloriesOn(&quot;Monday&quot;));
+
+    controller.undo();
+    assertEquals(100, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+    controller.redo();
+    assertEquals(200, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+
+    controller.clearMeal(&quot;Monday&quot;, &quot;Dinner&quot;);
+    assertNull(db.getMeal(&quot;Monday&quot;, &quot;Dinner&quot;));
+    assertEquals(100, db.amountOf(&quot;pasta&quot;, &quot;g&quot;));
+    assertTrue(events.stream().anyMatch(e -&gt; e.getPropertyName().equals(&quot;plan&quot;)));</code></pre><div class="why">De <b>integratietest</b>: alle lagen samen (controller → command → DB → plan → lijst). Lees het als een verhaal: recept toevoegen, twee keer plannen (200 g, 550 kcal op maandag), undo (100 g), redo (200 g), wissen. Op het einde: kreeg de "View" (hier een gewone lijst <code>events</code>) een seintje?</div></div><div class="walk"><pre class="code"><code>static class Counter implements Command {
+    int value;
+    public void execute() { value++; }
+    public void undo() { value--; }
+}</code></pre><div class="why">Een nep-command dat enkel telt. Zo testen we de CommandHistory los van de rest van de app.</div></div>
+<div class="tip"><b>Onthoud:</b> een unit test test één klasse apart; een integratietest test of de klassen samen werken.</div></div>
+<div id="klik"><div class="card"><h3>Volg één klik door de code</h3>
+<p>Je kiest "Pasta pomodoro" bij maandag, Dinner. Open de bestanden in deze volgorde en zoek de methode:</p>
+<ol class="trace">
+<li><b>MainView</b>, in <code>planTab()</code>: de keuzelijst roept <code>controller.assignMeal("Monday", "Dinner", pasta)</code>.</li>
+<li><b>PlannerController.assignMeal</b>: maakt <code>new SetMealCommand(db, ...)</code> en geeft het aan <code>history.run(...)</code>.</li>
+<li><b>CommandHistory.run</b>: roept <code>execute()</code> en legt het command op de undo-stapel.</li>
+<li><b>SetMealCommand.execute</b>: onthoudt wat er stond en roept <code>db.setMeal(...)</code>.</li>
+<li><b>MealPlannerDB.setMeal</b>: roept <code>plan.set(...)</code> ...</li>
+<li><b>WeekPlan.set</b>: zet het recept in de Map en roept <code>notifyObservers()</code> ...</li>
+<li><b>GroceryList.onPlanChanged</b>: rekent de hele lijst opnieuw uit (100 g pasta, 200 ml passata, 1 onion).</li>
+<li>Terug in <b>MealPlannerDB.setMeal</b>: <code>firePropertyChange("plan", ...)</code>.</li>
+<li><b>MainView.propertyChange → refresh()</b>: de keuzelijsten, "550 kcal" onder Monday en de boodschappenlijst worden opnieuw getekend.</li></ol>
+<div class="tip">Tip: zet in IntelliJ een <b>breakpoint</b> (klik naast het regelnummer) in <code>GroceryList.onPlanChanged</code> en start met de 🐞 Debug-knop. Je ziet dan de hele ketting in het "Frames"-venster.</div></div></div>
 
 <h2 id="diagrammen">Diagrammen</h2>
 <p>Dit zijn previews van precies wat in het Visual Paradigm-bestand zit. Pijlen: <b>volle lijn</b> = associatie (kent/bevat), <b>stippellijn met open driehoek</b> = implementeert interface, <b>stippellijn met pijl</b> = gebruikt/maakt (dependency).</p>
