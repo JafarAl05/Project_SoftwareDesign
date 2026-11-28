@@ -7,14 +7,16 @@ public class Recipe {
     private final String id;
     private final String title;
     private final String description;
+    private final int calories;   // kcal per serving
     private final List<Ingredient> ingredients;
     private final List<String> tags;
 
     // not "public": only the RecipeBuilder (same package) creates recipes
-    Recipe(String id, String title, String description, List<Ingredient> ingredients, List<String> tags) {
+    Recipe(String id, String title, String description, int calories, List<Ingredient> ingredients, List<String> tags) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.calories = calories;
         this.ingredients = ingredients;
         this.tags = tags;
     }
@@ -22,6 +24,7 @@ public class Recipe {
     public String getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
+    public int getCalories() { return calories; }
     public List<Ingredient> getIngredients() { return ingredients; }
     public List<String> getTags() { return tags; }
 

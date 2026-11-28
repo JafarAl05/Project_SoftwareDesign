@@ -28,9 +28,9 @@ public class GroceryList implements PlanObserver {
         generated.putAll(fresh);
     }
 
-    public void addExtra(String name, double amount, String unit) {
+    public void addExtra(String name, int amount, String unit) {
         if (name.isBlank() || amount <= 0) throw new IllegalArgumentException("Enter a name and an amount > 0.");
-        extras.add(new GroceryItem(name.trim().toLowerCase(), amount, unit.trim(), true));
+        extras.add(new GroceryItem(name.trim().toLowerCase(), amount, unit, true));
     }
 
     /** First the calculated items, then the extras. */
@@ -41,7 +41,7 @@ public class GroceryList implements PlanObserver {
     }
 
     /** Total of an ingredient in its base unit (0 if it is not on the list). */
-    public double amountOf(String name, String unit) {
+    public int amountOf(String name, String unit) {
         GroceryItem item = generated.get(name + "|" + unit);
         return item == null ? 0 : item.getAmount();
     }

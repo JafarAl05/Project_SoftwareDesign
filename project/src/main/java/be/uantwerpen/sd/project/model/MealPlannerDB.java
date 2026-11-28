@@ -67,17 +67,19 @@ public final class MealPlannerDB {
         pcs.firePropertyChange("plan", null, recipe);   // -> MVC: the View redraws
     }
 
+    public int caloriesOn(String day) { return plan.caloriesOn(day); }
+
     // ---------- groceries ----------
     public List<GroceryItem> getGroceries() { return groceries.items(); }
 
-    public double amountOf(String name, String unit) { return groceries.amountOf(name, unit); }
+    public int amountOf(String name, String unit) { return groceries.amountOf(name, unit); }
 
     public void toggleBought(GroceryItem item) {
         item.toggleBought();
         pcs.firePropertyChange("groceries", null, item);
     }
 
-    public void addExtra(String name, double amount, String unit) {
+    public void addExtra(String name, int amount, String unit) {
         groceries.addExtra(name, amount, unit);
         pcs.firePropertyChange("groceries", null, name);
     }

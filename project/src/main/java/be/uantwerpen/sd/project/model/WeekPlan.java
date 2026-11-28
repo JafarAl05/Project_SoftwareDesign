@@ -28,6 +28,16 @@ public class WeekPlan {
     /** All planned recipes. A list, so pasta planned twice counts twice. */
     public List<Recipe> plannedRecipes() { return new ArrayList<>(meals.values()); }
 
+    /** Total kcal of all meals planned on one day. */
+    public int caloriesOn(String day) {
+        int total = 0;
+        for (String slot : SLOTS) {
+            Recipe r = get(day, slot);
+            if (r != null) total += r.getCalories();
+        }
+        return total;
+    }
+
     /** After editing a recipe: put the new version everywhere (null = remove everywhere). */
     public void replaceEverywhere(String id, Recipe replacement) {
         for (String key : new ArrayList<>(meals.keySet())) {

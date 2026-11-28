@@ -15,12 +15,13 @@ public class PlannerController {
     }
 
     // ---------- recipes ----------
-    public void addRecipe(String title, String description, String ingredients, String tags) {
-        db.addRecipe(build(new RecipeBuilder(), title, description, ingredients, tags));
+    // ingredients = the rows of the form: each row is {amount, unit, name}
+    public void addRecipe(String title, String description, String calories, String[][] ingredients, String tags) {
+        db.addRecipe(build(new RecipeBuilder(), title, description, calories, ingredients, tags));
     }
 
-    public void editRecipe(Recipe old, String title, String description, String ingredients, String tags) {
-        db.updateRecipe(build(new RecipeBuilder().id(old.getId()), title, description, ingredients, tags));
+    public void editRecipe(Recipe old, String title, String description, String calories, String[][] ingredients, String tags) {
+        db.updateRecipe(build(new RecipeBuilder().id(old.getId()), title, description, calories, ingredients, tags));
         history.clear();   // old undo steps know the old recipe, so clear them
     }
 
@@ -44,19 +45,26 @@ public class PlannerController {
     public void toggleBought(GroceryItem item) { db.toggleBought(item); }
 
     public void addExtra(String name, String amount, String unit) {
-        db.addExtra(name, Double.parseDouble(amount.trim().replace(',', '.')), unit);
+        db.addExtra(name, toInt(amount, "The amount"), unit);
     }
 
-    /** Form text -> Recipe. Ingredients: one per line, e.g. "200 g pasta". */
-    private Recipe build(RecipeBuilder b, String title, String description, String ingredients, String tags) {
-        b.title(title).description(description);
-        for (String line : ingredients.split("\\R")) {
-            if (line.isBlank()) continue;
-            String[] p = line.trim().split("\\s+", 3);   // [amount, unit, name]
-            if (p.length < 3) throw new IllegalArgumentException("Write ingredients like: 200 g pasta");
-            b.ingredient(p[2], Double.parseDouble(p[0].replace(',', '.')), p[1]);
+    /** Form fields -> Recipe. Empty rows are skipped. */
+    private Recipe build(RecipeBuilder b, String title, String description, String calories, String[][] ingredients, String tags) {
+        b.title(title).description(description).calories(calories.isBlank() ? 0 : toInt(calories, "Calories"));
+        for (String[] row : ingredients) {
+            if (row[2].isBlank()) continue;                       // row without ingredient name
+            b.ingredient(row[2], toInt(row[0], "The amount of " + row[2]), row[1]);
         }
         for (String tag : tags.split(",")) b.tag(tag);
         return b.build();
+    }
+
+    /** "200" -> 200, with a clear message for "abc" or "1.5". */
+    private int toInt(String text, String what) {
+        try {
+            return Integer.parseInt(text.trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(what + " must be a whole number.");
+        }
     }
 }

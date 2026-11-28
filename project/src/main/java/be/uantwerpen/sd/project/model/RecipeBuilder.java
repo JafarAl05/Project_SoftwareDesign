@@ -6,12 +6,13 @@ import java.util.UUID;
 
 /**
  * BUILDER: builds a Recipe step by step.
- *   new RecipeBuilder().title("Pasta").ingredient("pasta", 100, "g").tag("quick").build();
+ *   new RecipeBuilder().title("Pasta").calories(550).ingredient("pasta", 100, "g").tag("quick").build();
  */
 public class RecipeBuilder {
     private String id = UUID.randomUUID().toString();
     private String title = "";
     private String description = "";
+    private int calories;
     private final List<Ingredient> ingredients = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
 
@@ -22,7 +23,13 @@ public class RecipeBuilder {
 
     public RecipeBuilder description(String description) { this.description = description.trim(); return this; }
 
-    public RecipeBuilder ingredient(String name, double amount, String unit) {
+    public RecipeBuilder calories(int calories) {
+        if (calories < 0) throw new IllegalArgumentException("Calories cannot be negative.");
+        this.calories = calories;
+        return this;
+    }
+
+    public RecipeBuilder ingredient(String name, int amount, String unit) {
         ingredients.add(new Ingredient(name, amount, unit));
         return this;
     }
@@ -37,6 +44,6 @@ public class RecipeBuilder {
     public Recipe build() {
         if (title.isEmpty()) throw new IllegalArgumentException("A recipe needs a title.");
         if (ingredients.isEmpty()) throw new IllegalArgumentException("A recipe needs at least one ingredient.");
-        return new Recipe(id, title, description, List.copyOf(ingredients), List.copyOf(tags));
+        return new Recipe(id, title, description, calories, List.copyOf(ingredients), List.copyOf(tags));
     }
 }

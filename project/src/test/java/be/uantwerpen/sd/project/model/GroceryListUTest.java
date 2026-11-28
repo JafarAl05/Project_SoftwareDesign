@@ -34,16 +34,16 @@ class GroceryListUTest {
     }
 
     @Test
-    void kilogramsAreConvertedToGramsAndNamesNormalised() {
-        Recipe big = new RecipeBuilder().title("Lots of pasta").ingredient(" Pasta ", 0.1, "kg").build();
+    void namesAreNormalisedBeforeSumming() {
+        Recipe big = new RecipeBuilder().title("Lots of pasta").ingredient(" Pasta ", 100, "g").build();
         plan.set("Monday", "Lunch", pasta);
         plan.set("Monday", "Dinner", big);
-        assertEquals(200, list.amountOf("pasta", "g"), 1e-9);
+        assertEquals(200, list.amountOf("pasta", "g"));
     }
 
     @Test
-    void differentBaseUnitsStaySeparateLines() {
-        Recipe r = new RecipeBuilder().title("Mix").ingredient("milk", 1, "l").ingredient("milk", 50, "g").build();
+    void differentUnitsStaySeparateLines() {
+        Recipe r = new RecipeBuilder().title("Mix").ingredient("milk", 1000, "ml").ingredient("milk", 50, "g").build();
         plan.set("Friday", "Breakfast", r);
         assertEquals(1000, list.amountOf("milk", "ml"));
         assertEquals(50, list.amountOf("milk", "g"));

@@ -34,12 +34,13 @@ class PlannerIT {
 
     @Test
     void planTwiceSumsAndUndoRedoUpdatesTheList() {
-        controller.addRecipe("Pasta", "", "100 g pasta\n1 piece onion", "quick");
+        controller.addRecipe("Pasta", "", "550", new String[][]{{"100", "g", "pasta"}, {"1", "piece", "onion"}}, "quick");
         Recipe pasta = db.getRecipes().get(0);
 
         controller.assignMeal("Monday", "Dinner", pasta);
         controller.assignMeal("Thursday", "Dinner", pasta);
         assertEquals(200, db.amountOf("pasta", "g"));
+        assertEquals(550, db.caloriesOn("Monday"));
 
         controller.undo();
         assertEquals(100, db.amountOf("pasta", "g"));
@@ -54,13 +55,14 @@ class PlannerIT {
 
     @Test
     void editingAndRemovingARecipeUpdatesPlanAndList() {
-        controller.addRecipe("Pasta", "", "100 g pasta", "");
+        controller.addRecipe("Pasta", "", "", new String[][]{{"100", "g", "pasta"}, {"", "g", ""}}, "");   // empty row is skipped
         Recipe pasta = db.getRecipes().get(0);
         controller.assignMeal("Monday", "Dinner", pasta);
 
-        controller.editRecipe(pasta, "Pasta XL", "", "0.3 kg pasta", "");
+        controller.editRecipe(pasta, "Pasta XL", "", "800", new String[][]{{"300", "g", "pasta"}}, "");
         assertEquals("Pasta XL", db.getMeal("Monday", "Dinner").getTitle());
-        assertEquals(300, db.amountOf("pasta", "g"), 1e-9);
+        assertEquals(300, db.amountOf("pasta", "g"));
+        assertEquals(800, db.caloriesOn("Monday"));
 
         controller.removeRecipe(db.getRecipes().get(0));
         assertTrue(db.getRecipes().isEmpty());
@@ -73,8 +75,8 @@ class PlannerIT {
         controller.addExtra("bread", "1", "piece");
         controller.toggleBought(db.getGroceries().get(0));
         assertTrue(db.getGroceries().get(0).isBought());
-        assertThrows(IllegalArgumentException.class, () -> controller.addExtra("milk", "lots", "l"));
-        assertThrows(IllegalArgumentException.class, () -> controller.addRecipe("Wrong", "", "pasta", ""));
-        assertThrows(IllegalArgumentException.class, () -> controller.addRecipe("Wrong", "", "100 kilo pasta", ""));
+        assertThrows(IllegalArgumentException.class, () -> controller.addExtra("milk", "lots", "ml"));
+        assertThrows(IllegalArgumentException.class, () -> controller.addRecipe("Wrong", "", "", new String[][]{{"1.5", "g", "pasta"}}, ""));
+        assertThrows(IllegalArgumentException.class, () -> controller.addRecipe("Wrong", "", "many", new String[][]{{"100", "g", "pasta"}}, ""));
     }
 }
